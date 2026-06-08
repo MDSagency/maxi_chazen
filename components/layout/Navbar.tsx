@@ -7,12 +7,17 @@ import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/cn";
 import { BRAND_IMAGES } from "@/lib/images";
 import Container from "@/components/ui/Container";
+import AnchorLink from "@/components/ui/AnchorLink";
+import { isHomeAnchor, parseAnchorHref } from "@/lib/anchor";
 
 const navLinks = [
   { href: "/", label: "Accueil" },
   { href: "/products", label: "Produits" },
   { href: "/#histoire", label: "Notre histoire" },
 ];
+
+const linkClass =
+  "text-[11px] uppercase tracking-[0.2em] text-muted transition-colors duration-500 hover:text-ink";
 
 export default function Navbar() {
   const [cartCount, setCartCount] = useState(0);
@@ -74,6 +79,34 @@ export default function Navbar() {
     };
   }, [menuOpen]);
 
+  function NavItem({
+    href,
+    label,
+    className,
+    onNavigate,
+  }: {
+    href: string;
+    label: string;
+    className: string;
+    onNavigate?: () => void;
+  }) {
+    const isAnchor = parseAnchorHref(href) !== null && isHomeAnchor(href);
+
+    if (isAnchor) {
+      return (
+        <AnchorLink href={href} className={className} onNavigate={onNavigate}>
+          {label}
+        </AnchorLink>
+      );
+    }
+
+    return (
+      <Link href={href} className={className} onClick={onNavigate}>
+        {label}
+      </Link>
+    );
+  }
+
   return (
     <>
       <header
@@ -101,17 +134,16 @@ export default function Navbar() {
           </Link>
 
           <nav
-            className="hidden items-center gap-8 lg:gap-10 md:flex"
+            className="hidden items-center gap-8 md:flex lg:gap-10"
             aria-label="Navigation principale"
           >
             {navLinks.map((link) => (
-              <Link
+              <NavItem
                 key={link.href}
                 href={link.href}
-                className="text-[11px] uppercase tracking-[0.2em] text-muted transition-colors duration-500 hover:text-ink"
-              >
-                {link.label}
-              </Link>
+                label={link.label}
+                className={linkClass}
+              />
             ))}
             <Link
               href="/panier"
@@ -184,13 +216,12 @@ export default function Navbar() {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.08 + index * 0.05, duration: 0.6 }}
                 >
-                  <Link
+                  <NavItem
                     href={link.href}
-                    onClick={() => setMenuOpen(false)}
+                    label={link.label}
                     className="font-display text-3xl text-ink"
-                  >
-                    {link.label}
-                  </Link>
+                    onNavigate={() => setMenuOpen(false)}
+                  />
                 </motion.div>
               ))}
               <motion.div

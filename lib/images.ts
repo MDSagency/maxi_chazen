@@ -14,7 +14,9 @@ function asset(img: StaticImageData): string {
  * unnamed*.jpg = official product flat-lays & lifestyle shots.
  */
 const PUBLIC = {
-  logo: "/logo.jfif",
+  /** Hi-res PNG for UI — sharp on Retina displays */
+  logo: "https://res.cloudinary.com/drfntkkhe/image/upload/v1777151440/image-removebg-preview_uuol8c.png",
+  logoFavicon: "/logo.jfif",
   productsFlatlay: "/images/unnamed.jpg",
   productsNursery: "/images/unnamed1.jpg",
   productBalm: "/images/unnamed2.jpg",

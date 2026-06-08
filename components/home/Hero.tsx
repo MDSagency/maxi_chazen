@@ -1,12 +1,13 @@
 "use client";
 
-import Image from "next/image";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { useRef } from "react";
 import Button from "@/components/ui/Button";
 import Container from "@/components/ui/Container";
 import FadeIn from "@/components/motion/FadeIn";
 import EditorialImage from "@/components/ui/EditorialImage";
+import BrandMark from "@/components/ui/BrandMark";
+import AnchorLink from "@/components/ui/AnchorLink";
 import { BRAND_IMAGES } from "@/lib/images";
 
 export default function Hero() {
@@ -46,9 +47,12 @@ export default function Hero() {
               <Button href="/products" size="lg">
                 Découvrir la collection
               </Button>
-              <Button href="#histoire" variant="ghost" size="md">
+              <AnchorLink
+                href="/#histoire"
+                className="inline-flex h-11 items-center justify-center px-7 text-[10px] uppercase tracking-[0.2em] text-ink transition-colors duration-500 hover:text-charcoal"
+              >
                 Notre histoire
-              </Button>
+              </AnchorLink>
             </div>
           </FadeIn>
 
@@ -87,23 +91,20 @@ export default function Hero() {
               className="luxury-shadow-deep"
             />
 
-            <div className="absolute -bottom-8 left-0 flex max-w-[280px] items-start gap-4 border border-line bg-white p-5 luxury-shadow md:-left-6">
-              <div className="relative h-16 w-16 shrink-0 overflow-hidden bg-paper">
-                <Image
-                  src={BRAND_IMAGES.products.balm}
-                  alt="Baume barrière Maxi Chazen"
-                  fill
-                  sizes="64px"
-                  className="object-cover object-center"
-                />
-              </div>
+            <motion.div
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 1, delay: 0.6, ease: [0.25, 0.1, 0.25, 1] }}
+              className="absolute -bottom-8 left-0 flex max-w-[300px] items-center gap-5 border border-line bg-white p-5 luxury-shadow md:-left-6"
+            >
+              <BrandMark size="md" animated priority />
               <div>
-                <p className="eyebrow mb-2 text-brand-blue">Maxi Chazen</p>
-                <p className="text-sm font-light leading-relaxed text-charcoal">
+                <p className="font-display text-lg text-ink">Maxi Chazen</p>
+                <p className="mt-1 text-sm font-light leading-relaxed text-charcoal">
                   Baume barrière doux — formulé pour la peau délicate.
                 </p>
               </div>
-            </div>
+            </motion.div>
           </motion.div>
         </FadeIn>
       </Container>

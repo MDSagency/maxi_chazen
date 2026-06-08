@@ -114,6 +114,16 @@
     @apply h-px w-full bg-line;
   }
 
+  .anchor-section {
+    scroll-margin-top: 5.75rem;
+  }
+
+  @media (max-width: 768px) {
+    .anchor-section {
+      scroll-margin-top: 4.75rem;
+    }
+  }
+
   .hover-lift {
     transition: transform 0.6s var(--ease-premium), box-shadow 0.6s var(--ease-premium);
   }

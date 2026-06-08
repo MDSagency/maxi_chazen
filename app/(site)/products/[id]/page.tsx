@@ -3,8 +3,8 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { supabase } from "@/lib/supabaseClient";
-import { mapProduct, type Product } from "@/lib/types";
+import { fetchProduct, fetchProducts } from "@/lib/api/client";
+import type { Product } from "@/lib/types";
 import { useCart } from "@/hooks/useCart";
 import Container from "@/components/ui/Container";
 import Button from "@/components/ui/Button";
@@ -31,37 +31,25 @@ export default function ProductDetailPage() {
 
   useEffect(() => {
     async function load() {
-      if (!supabase || !productId) {
+      if (!productId) {
         setLoading(false);
         return;
       }
 
-      const { data, error } = await supabase
-        .from("products")
-        .select("id, category, name, price, in_stock, image, created_at")
-        .eq("id", productId)
-        .maybeSingle();
+      const mapped = await fetchProduct(productId);
+      setProduct(mapped);
 
-      if (!error && data) {
-        const mapped = mapProduct(data as Record<string, unknown>);
-        setProduct(mapped);
-
-        if (mapped) {
-          const { data: relatedData } = await supabase
-            .from("products")
-            .select("id, category, name, price, in_stock, image, created_at")
-            .eq("category", mapped.category)
-            .neq("id", mapped.id)
-            .limit(4);
-
-          if (relatedData) {
-            setRelated(
-              relatedData
-                .map((item) => mapProduct(item as Record<string, unknown>))
-                .filter((p): p is Product => p !== null),
-            );
-          }
-        }
+      if (mapped) {
+        const all = await fetchProducts();
+        setRelated(
+          all
+            .filter(
+              (p) =>
+                p.id !== mapped.id &&
+                p.category.trim() === mapped.category.trim(),
+            )
+            .slice(0, 4),
+        );
       }
       setLoading(false);
     }

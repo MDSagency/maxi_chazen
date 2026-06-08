@@ -1,8 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { supabase } from "@/lib/supabaseClient";
-import { mapProduct, type Product } from "@/lib/types";
+import { fetchProducts } from "@/lib/api/client";
+import type { Product } from "@/lib/types";
 import { useCart } from "@/hooks/useCart";
 import Container from "@/components/ui/Container";
 import SectionHeader from "@/components/ui/SectionHeader";
@@ -17,23 +17,12 @@ export default function FeaturedProducts() {
 
   useEffect(() => {
     async function load() {
-      if (!supabase) {
-        setLoading(false);
-        return;
-      }
-
-      const { data, error } = await supabase
-        .from("products")
-        .select("id, category, name, price, in_stock, image, created_at")
-        .order("created_at", { ascending: false })
-        .limit(4);
-
-      if (!error && data) {
-        setProducts(
-          data
-            .map((item) => mapProduct(item as Record<string, unknown>))
-            .filter((p): p is Product => p !== null),
-        );
+      const data = await fetchProducts({ featured: true, limit: 4 });
+      if (data.length === 0) {
+        const fallback = await fetchProducts({ limit: 4 });
+        setProducts(fallback);
+      } else {
+        setProducts(data);
       }
       setLoading(false);
     }

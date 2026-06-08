@@ -1,5 +1,6 @@
 import Hero from "@/components/home/Hero";
-import BrandStory from "@/components/home/BrandStory";
+import NotreHistoire from "@/components/home/NotreHistoire";
+import HashScrollHandler from "@/components/motion/HashScrollHandler";
 import FeaturedProducts from "@/components/home/FeaturedProducts";
 import CategoryShowcase from "@/components/home/CategoryShowcase";
 import LifestyleGallery from "@/components/home/LifestyleGallery";
@@ -10,8 +11,9 @@ import Newsletter from "@/components/home/Newsletter";
 export default function Home() {
   return (
     <>
+      <HashScrollHandler />
       <Hero />
-      <BrandStory />
+      <NotreHistoire />
       <FeaturedProducts />
       <CategoryShowcase />
       <LifestyleGallery />

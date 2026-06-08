@@ -53,3 +53,12 @@ export const defaultShippingTable: Record<string, ShippingRates> = {
   Illizi: { home: 1850, desk: 1750 },
   Tindouf: { home: 1850, desk: 1750 },
 };
+
+export function getShippingCost(
+  wilaya: string,
+  deliveryMethod: string,
+): number {
+  const rates = defaultShippingTable[wilaya];
+  if (!rates) return 0;
+  return deliveryMethod === "Livraison à domicile" ? rates.home : rates.desk;
+}

@@ -1,9 +1,5 @@
 import "./globals.css";
 import type { Metadata } from "next";
-import { Suspense } from "react";
-import Navbar from "@/components/layout/Navbar";
-import Footer from "@/components/layout/Footer";
-import SmoothScrollProvider from "@/components/motion/SmoothScrollProvider";
 
 export const metadata: Metadata = {
   title: "Maxi Chazen — Soins premium pour bébé",
@@ -23,15 +19,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="fr">
-      <body className="min-h-screen bg-white">
-        <SmoothScrollProvider>
-          <Suspense fallback={<div className="h-20" />}>
-            <Navbar />
-          </Suspense>
-          <main className="min-h-screen">{children}</main>
-          <Footer />
-        </SmoothScrollProvider>
-      </body>
+      <body className="min-h-screen bg-white">{children}</body>
     </html>
   );
 }

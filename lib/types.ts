@@ -1,12 +1,18 @@
 export type Product = {
   id: string;
+  slug?: string;
   category: string;
+  categorySlug?: string;
   name: string;
   price: number;
   in_stock: boolean;
+  stockQuantity?: number;
   image: string;
+  images?: string[] | Array<{ url: string; alt?: string | null }>;
   created_at?: string;
   description?: string;
+  shortDescription?: string | null;
+  featured?: boolean;
 };
 
 export type CartItem = {

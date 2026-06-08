@@ -43,3 +43,8 @@ next-env.d.ts
 
 # archive
 maxi-chazen-website-main.zip
+
+# local npm cache
+.npm-cache
+
+/lib/generated/prisma
