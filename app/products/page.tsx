@@ -1,30 +1,24 @@
 "use client";
 
-import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/lib/supabaseClient";
-
-type Product = {
-  id: string;
-  category: string;
-  name: string;
-  price: number;
-  in_stock: boolean;
-  image: string;
-  created_at?: string;
-};
-
-type CartItem = { id: string; quantity: number };
+import { mapProduct, type Product } from "@/lib/types";
+import { useCart } from "@/hooks/useCart";
+import Container from "@/components/ui/Container";
+import SectionHeader from "@/components/ui/SectionHeader";
+import ProductCard from "@/components/commerce/ProductCard";
+import CartToast from "@/components/commerce/CartToast";
+import Button from "@/components/ui/Button";
+import { cn } from "@/lib/cn";
 
 const ITEMS_PER_PAGE = 8;
 
 export default function ProductsPage() {
   const [productsList, setProductsList] = useState<Product[]>([]);
-  const [cart, setCart] = useState<CartItem[]>([]);
-  const [successMessage, setSuccessMessage] = useState("");
   const [loadingProducts, setLoadingProducts] = useState(true);
   const [activeCategory, setActiveCategory] = useState("Tout");
   const [currentPage, setCurrentPage] = useState(1);
+  const { addToCart, successMessage } = useCart();
 
   useEffect(() => {
     async function loadProducts() {
@@ -38,85 +32,40 @@ export default function ProductsPage() {
         .select("id, category, name, price, in_stock, image, created_at")
         .order("created_at", { ascending: false });
 
-      if (error || !data || !Array.isArray(data)) {
-        setLoadingProducts(false);
-        return;
+      if (!error && data) {
+        setProductsList(
+          data
+            .map((item) => mapProduct(item as Record<string, unknown>))
+            .filter((p): p is Product => p !== null),
+        );
       }
-
-      const mapped = data.map((item) => ({
-        id: String(item.id || "").trim(),
-        category: String(item.category || ""),
-        name: String(item.name || ""),
-        price: Number(item.price) || 0,
-        in_stock:
-          item.in_stock === true ||
-          item.in_stock === "true" ||
-          item.in_stock === 1,
-        image: String(item.image || ""),
-        created_at: item.created_at ? String(item.created_at) : undefined,
-      })) as Product[];
-
-      setProductsList(mapped.filter((item) => item.id.length > 0));
       setLoadingProducts(false);
     }
 
     void loadProducts();
   }, []);
 
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-    const stored = window.localStorage.getItem("maxi-cart");
-    if (!stored) return;
-    try {
-      setCart(JSON.parse(stored));
-    } catch {
-      setCart([]);
-    }
-  }, []);
-
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-    window.localStorage.setItem("maxi-cart", JSON.stringify(cart));
-    const totalQuantity = cart.reduce((sum, item) => sum + item.quantity, 0);
-    window.dispatchEvent(
-      new CustomEvent("maxi-cart-updated", { detail: { totalQuantity } }),
-    );
-  }, [cart]);
-
   const categories = useMemo(() => {
-    const uniqueCategories = Array.from(
+    const unique = Array.from(
       new Set(
         productsList
-          .map((product) => product.category.trim())
-          .filter((category) => category.length > 0),
+          .map((p) => p.category.trim())
+          .filter((c) => c.length > 0),
       ),
     );
-
-    return [
-      "Tout",
-      ...uniqueCategories.sort((left, right) =>
-        left.localeCompare(right, "fr"),
-      ),
-    ];
+    return ["Tout", ...unique.sort((a, b) => a.localeCompare(b, "fr"))];
   }, [productsList]);
 
   const filteredProducts = useMemo(() => {
-    if (activeCategory === "Tout") {
-      return productsList;
-    }
-
-    return productsList.filter(
-      (product) => product.category.trim() === activeCategory,
-    );
+    if (activeCategory === "Tout") return productsList;
+    return productsList.filter((p) => p.category.trim() === activeCategory);
   }, [activeCategory, productsList]);
 
   const totalPages = Math.max(
     1,
     Math.ceil(filteredProducts.length / ITEMS_PER_PAGE),
   );
-
   const safePage = Math.min(currentPage, totalPages);
-
   const paginatedProducts = filteredProducts.slice(
     (safePage - 1) * ITEMS_PER_PAGE,
     safePage * ITEMS_PER_PAGE,
@@ -127,185 +76,102 @@ export default function ProductsPage() {
   }, [activeCategory]);
 
   useEffect(() => {
-    if (currentPage > totalPages) {
-      setCurrentPage(totalPages);
-    }
+    if (currentPage > totalPages) setCurrentPage(totalPages);
   }, [currentPage, totalPages]);
 
-  const addToCart = (productId: string) => {
-    setCart((current) => {
-      const existing = current.find((item) => item.id === productId);
-      const nextCart = existing
-        ? current.map((item) =>
-            item.id === productId
-              ? { ...item, quantity: item.quantity + 1 }
-              : item,
-          )
-        : [...current, { id: productId, quantity: 1 }];
-
-      const total = nextCart.reduce((sum, item) => sum + item.quantity, 0);
-      window.dispatchEvent(
-        new CustomEvent("maxi-cart-updated", {
-          detail: { totalQuantity: total },
-        }),
-      );
-
-      setSuccessMessage("Produit ajouté avec succès !");
-      window.setTimeout(() => setSuccessMessage(""), 1800);
-      return nextCart;
-    });
-  };
-
   return (
-    <section className="products-page" id="produits">
-      <div className="products-page__shell">
-        <div className="products-page__intro">
-          <div className="products-page__intro-copy">
-            <p className="products-page__eyebrow">Collection Maxi Chazen</p>
-            <h1 className="products-page__title">Nos produits</h1>
-            <p className="products-page__lead">
-              Des soins pensés pour la douceur du quotidien, avec une sélection
-              simple, claire et élégante.
-            </p>
-          </div>
-
-          <div className="products-page__stat-card">
-            <span className="products-page__stat-label">Catalogue complet</span>
-            <strong className="products-page__stat-value">
+    <section className="bg-surface pb-32 pt-32 md:pt-44">
+      <Container>
+        <div className="mb-14 flex flex-col gap-10 md:mb-20 md:flex-row md:items-end md:justify-between">
+          <SectionHeader
+            eyebrow="Collection"
+            title="Nos produits"
+            description="Des soins pensés pour la douceur du quotidien — une sélection éditoriale, claire et raffinée."
+            className="mb-0"
+          />
+          <div className="border border-line bg-paper px-8 py-6 text-center md:text-left">
+            <p className="eyebrow mb-2">Catalogue</p>
+            <p className="font-display text-4xl text-ink">
               {filteredProducts.length.toString().padStart(2, "0")}
-            </strong>
-            <span className="products-page__stat-caption">
-              références sélectionnées
-            </span>
+            </p>
+            <p className="mt-1 text-[11px] uppercase tracking-[0.18em] text-muted-light">
+              références
+            </p>
           </div>
         </div>
 
         <div
-          className="products-page__filters"
+          className="mb-14 flex flex-wrap gap-0 border-y border-line"
           aria-label="Filtres de produits"
         >
           {categories.map((category) => (
             <button
               key={category}
               type="button"
-              className={`products-page__filter${
-                activeCategory === category
-                  ? " products-page__filter--active"
-                  : ""
-              }`}
               onClick={() => setActiveCategory(category)}
+              className={cn(
+                "border-r border-line px-6 py-4 text-[10px] uppercase tracking-[0.2em] transition-colors duration-500 last:border-r-0",
+                activeCategory === category
+                  ? "bg-ink text-white"
+                  : "bg-transparent text-muted hover:bg-paper hover:text-ink",
+              )}
             >
               {category}
             </button>
           ))}
         </div>
 
-        <div className="products-page__body">
-          <div className="products-page__grid-wrap">
-            {loadingProducts ? (
-              <p className="products-page__status">
-                Chargement des produits...
-              </p>
-            ) : paginatedProducts.length === 0 ? (
-              <p className="products-page__status">Aucun produit disponible.</p>
-            ) : (
-              <div className="products-page__grid">
-                {paginatedProducts.map((product, index) => (
-                  <article className="products-page__card" key={product.id}>
-                    <div className="products-page__image-wrap">
-                      {product.image ? (
-                        <img
-                          className="products-page__image"
-                          src={product.image}
-                          alt={product.name}
-                        />
-                      ) : (
-                        <div className="products-page__image-placeholder" />
-                      )}
-                      {!product.in_stock && (
-                        <span className="products-page__badge">Rupture</span>
-                      )}
-                    </div>
-
-                    <div className="products-page__meta">
-                      <div>
-                        <p className="products-page__category">
-                          {product.category}
-                        </p>
-                        <h2 className="products-page__name">{product.name}</h2>
-                      </div>
-
-                      <div className="products-page__purchase">
-                        <p className="products-page__price">
-                          {product.price.toLocaleString("fr-FR")} DA
-                        </p>
-                        <button
-                          className="products-page__button"
-                          onClick={() => addToCart(product.id)}
-                          disabled={!product.in_stock}
-                        >
-                          Ajouter
-                        </button>
-                      </div>
-                    </div>
-                  </article>
-                ))}
-              </div>
-            )}
-
-            <div className="products-page__pagination">
-              <button
-                type="button"
-                className="products-page__page-button"
-                onClick={() => setCurrentPage((page) => Math.max(1, page - 1))}
-                disabled={safePage === 1}
-              >
-                Précédent
-              </button>
-
-              <div className="products-page__page-indicator">
-                <span>
-                  {safePage.toString().padStart(2, "0")} /{" "}
-                  {totalPages.toString().padStart(2, "0")}
-                </span>
-                <span>Pages</span>
-              </div>
-
-              <button
-                type="button"
-                className="products-page__page-button"
-                onClick={() =>
-                  setCurrentPage((page) => Math.min(totalPages, page + 1))
-                }
-                disabled={safePage === totalPages}
-              >
-                Suivant
-              </button>
-            </div>
+        {loadingProducts ? (
+          <div className="grid grid-cols-2 gap-6 md:grid-cols-3 lg:grid-cols-4 md:gap-10">
+            {Array.from({ length: 8 }).map((_, i) => (
+              <div key={i} className="aspect-[4/5] animate-pulse bg-line" />
+            ))}
           </div>
+        ) : paginatedProducts.length === 0 ? (
+          <p className="py-24 text-center font-light text-muted">
+            Aucun produit disponible.
+          </p>
+        ) : (
+          <div className="grid grid-cols-2 gap-6 md:grid-cols-3 lg:grid-cols-4 md:gap-10">
+            {paginatedProducts.map((product, index) => (
+              <ProductCard
+                key={product.id}
+                product={product}
+                index={index}
+                onAddToCart={addToCart}
+              />
+            ))}
+          </div>
+        )}
 
-          <aside className="products-page__editorial">
-            <p className="products-page__editorial-label">Éditorial</p>
-            <p className="products-page__editorial-text">
-              Chaque produit est sélectionné pour accompagner les premiers
-              gestes de soin avec simplicité, douceur et cohérence.
-            </p>
-
-            <div className="products-page__editorial-note">
-              <span>Navigation rapide</span>
-              <Link href="/" className="products-page__editorial-link">
-                Retour à l'accueil
-              </Link>
-            </div>
-          </aside>
-        </div>
-      </div>
-
-      {successMessage && (
-        <p className="products-page__toast" role="status" aria-live="polite">
-          {successMessage}
-        </p>
-      )}
+        {totalPages > 1 ? (
+          <div className="mt-20 flex items-center justify-center gap-8 border-t border-line pt-12">
+            <Button
+              variant="outline"
+              size="sm"
+              disabled={safePage === 1}
+              onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+            >
+              Précédent
+            </Button>
+            <span className="text-[11px] uppercase tracking-[0.2em] text-muted">
+              {safePage.toString().padStart(2, "0")} /{" "}
+              {totalPages.toString().padStart(2, "0")}
+            </span>
+            <Button
+              variant="outline"
+              size="sm"
+              disabled={safePage === totalPages}
+              onClick={() =>
+                setCurrentPage((p) => Math.min(totalPages, p + 1))
+              }
+            >
+              Suivant
+            </Button>
+          </div>
+        ) : null}
+      </Container>
+      <CartToast message={successMessage} />
     </section>
   );
 }

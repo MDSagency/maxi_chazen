@@ -1,18 +1,21 @@
-import Hero from "@/components/Hero";
-import BrandSections from "@/components/BrandSections";
-import Categories from "@/components/Categories";
-import Reasons from "@/components/reasons";
-import { Suspense } from "react";
+import Hero from "@/components/home/Hero";
+import BrandStory from "@/components/home/BrandStory";
+import FeaturedProducts from "@/components/home/FeaturedProducts";
+import CategoryShowcase from "@/components/home/CategoryShowcase";
+import Benefits from "@/components/home/Benefits";
+import Testimonials from "@/components/home/Testimonials";
+import Newsletter from "@/components/home/Newsletter";
 
 export default function Home() {
   return (
     <>
       <Hero />
-      <BrandSections />
-      <Suspense fallback={<section className="page-loader-wrap" />}>
-        <Categories />
-        <Reasons />
-      </Suspense>
+      <BrandStory />
+      <FeaturedProducts />
+      <CategoryShowcase />
+      <Benefits />
+      <Testimonials />
+      <Newsletter />
     </>
   );
 }

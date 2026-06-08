@@ -1,16 +1,20 @@
 import "./globals.css";
 import type { Metadata } from "next";
 import { Suspense } from "react";
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
+import Navbar from "@/components/layout/Navbar";
+import Footer from "@/components/layout/Footer";
+import SmoothScrollProvider from "@/components/motion/SmoothScrollProvider";
 
 export const metadata: Metadata = {
-  title: "Maxi Chazen - Soins bébé",
-  description: "Produits pour bébé en Algérie",
+  title: "Maxi Chazen — Soins premium pour bébé",
+  description:
+    "Découvrez des soins bébé premium, formulés avec douceur et rigueur. Livraison partout en Algérie.",
   icons: {
-    icon: "/logo.jfif",
-    shortcut: "/logo.jfif",
-    apple: "/logo.jfif",
+    icon: "https://res.cloudinary.com/drfntkkhe/image/upload/v1777151440/image-removebg-preview_uuol8c.png",
+    shortcut:
+      "https://res.cloudinary.com/drfntkkhe/image/upload/v1777151440/image-removebg-preview_uuol8c.png",
+    apple:
+      "https://res.cloudinary.com/drfntkkhe/image/upload/v1777151440/image-removebg-preview_uuol8c.png",
   },
 };
 
@@ -21,12 +25,14 @@ export default function RootLayout({
 }) {
   return (
     <html lang="fr">
-      <body className="site-shell">
-        <Suspense fallback={<div />}>
-          <Navbar />
-        </Suspense>
-        <main className="site-main">{children}</main>
-        <Footer />
+      <body className="min-h-screen bg-white">
+        <SmoothScrollProvider>
+          <Suspense fallback={<div className="h-20" />}>
+            <Navbar />
+          </Suspense>
+          <main className="min-h-screen">{children}</main>
+          <Footer />
+        </SmoothScrollProvider>
       </body>
     </html>
   );
