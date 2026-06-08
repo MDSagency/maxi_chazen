@@ -1,9 +1,9 @@
 "use client";
 
-import Image from "next/image";
 import Container from "@/components/ui/Container";
 import SectionHeader from "@/components/ui/SectionHeader";
 import FadeIn from "@/components/motion/FadeIn";
+import EditorialImage from "@/components/ui/EditorialImage";
 import { BRAND_IMAGES } from "@/lib/images";
 
 const pillars = [
@@ -30,13 +30,19 @@ export default function BrandStory() {
       <Container>
         <div className="grid items-start gap-16 lg:grid-cols-2 lg:gap-28">
           <FadeIn>
-            <div className="relative aspect-[4/5] overflow-hidden bg-paper luxury-shadow">
-              <Image
+            <div className="space-y-4">
+              <EditorialImage
                 src={BRAND_IMAGES.story}
-                alt="Composition éditoriale de soins premium"
-                fill
+                alt="Routine de soin Maxi Chazen — bébé et essentiels"
+                aspect="portrait"
                 sizes="(max-width: 1024px) 100vw, 45vw"
-                className="object-cover"
+                className="luxury-shadow"
+              />
+              <EditorialImage
+                src={BRAND_IMAGES.products.nursery}
+                alt="Ligne lotion et crème Maxi Chazen"
+                aspect="landscape"
+                sizes="(max-width: 1024px) 100vw, 45vw"
               />
             </div>
           </FadeIn>

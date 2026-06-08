@@ -80,7 +80,7 @@ export default function ProductsPage() {
   }, [currentPage, totalPages]);
 
   return (
-    <section className="bg-surface pb-32 pt-32 md:pt-44">
+    <section className="bg-surface pb-32 pt-36 md:pt-48">
       <Container>
         <div className="mb-14 flex flex-col gap-10 md:mb-20 md:flex-row md:items-end md:justify-between">
           <SectionHeader

@@ -3,33 +3,46 @@
 import FadeIn from "@/components/motion/FadeIn";
 import Container from "@/components/ui/Container";
 import SectionHeader from "@/components/ui/SectionHeader";
+import EditorialImage from "@/components/ui/EditorialImage";
+import { BRAND_IMAGES } from "@/lib/images";
 
 const benefits = [
   {
     num: "01",
-    title: "Ingrédients sûrs",
-    text: "Formules sans substances controversées, adaptées aux peaux les plus sensibles.",
+    title: "Soins Délicats",
+    text: "Des textures légères et des gestes de soin pensés pour la peau la plus fragile, dès les premiers jours.",
+    image: BRAND_IMAGES.editorial.soinsDelicats,
+    alt: "Rituel de soin délicat — bien-être quotidien de bébé",
   },
   {
     num: "02",
-    title: "Testé dermatologiquement",
-    text: "Chaque produit est validé par des experts pour garantir tolérance et efficacité.",
+    title: "Produits Naturels",
+    text: "Des actifs d'origine naturelle, sélectionnés pour leur pureté et leur douceur sur la peau de bébé.",
+    image: BRAND_IMAGES.editorial.produitsNaturels,
+    alt: "Essentiels de soin naturels — routine Maxi Chazen",
   },
   {
     num: "03",
-    title: "Formules naturelles",
-    text: "Des actifs d'origine naturelle, sélectionnés pour leur douceur et leur pureté.",
+    title: "Protection Quotidienne",
+    text: "Des formules qui protègent, hydratent et apaisent — pour un quotidien serein, en toute confiance.",
+    image: BRAND_IMAGES.editorial.protectionQuotidienne,
+    alt: "Pureté et protection — douceur au quotidien",
   },
   {
     num: "04",
-    title: "Adapté aux bébés",
-    text: "Conçu spécifiquement pour les premiers gestes de soin, dès la naissance.",
+    title: "Confiance Parentale",
+    text: "Testés dermatologiquement et formulés avec exigence, nos soins accompagnent chaque étape avec sérénité.",
+    image: BRAND_IMAGES.editorial.confianceParentale,
+    alt: "Lien de confiance entre parent et bébé",
   },
 ];
 
 export default function Benefits() {
   return (
-    <section className="paper-grain border-y border-line bg-paper section-editorial">
+    <section
+      id="engagements"
+      className="paper-grain border-y border-line bg-paper section-editorial"
+    >
       <Container>
         <SectionHeader
           eyebrow="Nos engagements"
@@ -38,20 +51,29 @@ export default function Benefits() {
           align="center"
         />
 
-        <div className="grid gap-px bg-line md:grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-8 md:grid-cols-2 lg:gap-10">
           {benefits.map((benefit, index) => (
             <FadeIn key={benefit.title} delay={index * 0.06}>
-              <div className="group flex h-full flex-col bg-paper p-8 md:p-10 transition-colors duration-700 hover:bg-white">
-                <span className="mb-8 font-display text-3xl text-muted-light">
-                  {benefit.num}
-                </span>
-                <h3 className="mb-4 font-display text-xl text-ink">
-                  {benefit.title}
-                </h3>
-                <p className="text-[14px] font-light leading-[1.8] text-muted">
-                  {benefit.text}
-                </p>
-              </div>
+              <article className="group flex h-full flex-col border border-line bg-white transition-colors duration-700 hover:bg-paper">
+                <EditorialImage
+                  src={benefit.image}
+                  alt={benefit.alt}
+                  aspect="landscape"
+                  sizes="(max-width: 768px) 100vw, 50vw"
+                  className="luxury-shadow"
+                />
+                <div className="flex flex-1 flex-col p-8 md:p-10">
+                  <span className="mb-5 font-display text-2xl text-muted-light">
+                    {benefit.num}
+                  </span>
+                  <h3 className="mb-4 font-display text-2xl text-ink">
+                    {benefit.title}
+                  </h3>
+                  <p className="text-[14px] font-light leading-[1.8] text-muted">
+                    {benefit.text}
+                  </p>
+                </div>
+              </article>
             </FadeIn>
           ))}
         </div>

@@ -6,6 +6,7 @@ import { useRef } from "react";
 import Button from "@/components/ui/Button";
 import Container from "@/components/ui/Container";
 import FadeIn from "@/components/motion/FadeIn";
+import EditorialImage from "@/components/ui/EditorialImage";
 import { BRAND_IMAGES } from "@/lib/images";
 
 export default function Hero() {
@@ -14,12 +15,12 @@ export default function Hero() {
     target: ref,
     offset: ["start start", "end start"],
   });
-  const imageY = useTransform(scrollYProgress, [0, 1], ["0%", "10%"]);
+  const imageY = useTransform(scrollYProgress, [0, 1], ["0%", "8%"]);
 
   return (
     <section
       ref={ref}
-      className="paper-grain relative overflow-hidden bg-surface section-editorial pt-32 md:pt-44"
+      className="paper-grain relative overflow-hidden bg-surface section-editorial pt-36 md:pt-48"
     >
       <Container className="grid items-center gap-16 lg:grid-cols-2 lg:gap-24">
         <div className="max-w-xl">
@@ -77,22 +78,31 @@ export default function Hero() {
 
         <FadeIn delay={0.15} direction="none">
           <motion.div style={{ y: imageY }} className="relative mx-auto w-full lg:mx-0">
-            <div className="relative aspect-[3/4] overflow-hidden bg-paper luxury-shadow-deep">
-              <Image
-                src={BRAND_IMAGES.hero}
-                alt="Soin délicat pour bébé — photographie éditoriale"
-                fill
-                priority
-                sizes="(max-width: 1024px) 90vw, 45vw"
-                className="object-cover"
-              />
-            </div>
+            <EditorialImage
+              src={BRAND_IMAGES.hero}
+              alt="Lien tendre entre parent et bébé — Maxi Chazen"
+              aspect="hero"
+              priority
+              sizes="(max-width: 1024px) 90vw, 45vw"
+              className="luxury-shadow-deep"
+            />
 
-            <div className="absolute -bottom-8 left-0 border border-line bg-white p-6 luxury-shadow md:-left-6">
-              <p className="eyebrow mb-2 text-brand-blue">Formules douces</p>
-              <p className="max-w-[200px] text-sm font-light leading-relaxed text-charcoal">
-                Pensé pour les parents exigeants.
-              </p>
+            <div className="absolute -bottom-8 left-0 flex max-w-[280px] items-start gap-4 border border-line bg-white p-5 luxury-shadow md:-left-6">
+              <div className="relative h-16 w-16 shrink-0 overflow-hidden bg-paper">
+                <Image
+                  src={BRAND_IMAGES.products.balm}
+                  alt="Baume barrière Maxi Chazen"
+                  fill
+                  sizes="64px"
+                  className="object-cover object-center"
+                />
+              </div>
+              <div>
+                <p className="eyebrow mb-2 text-brand-blue">Maxi Chazen</p>
+                <p className="text-sm font-light leading-relaxed text-charcoal">
+                  Baume barrière doux — formulé pour la peau délicate.
+                </p>
+              </div>
             </div>
           </motion.div>
         </FadeIn>

@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import type { Product } from "@/lib/types";
+import { resolveProductImage } from "@/lib/images";
 import Button from "@/components/ui/Button";
 
 type ProductCardProps = {
@@ -17,6 +18,8 @@ export default function ProductCard({
   onAddToCart,
   index = 0,
 }: ProductCardProps) {
+  const imageSrc = resolveProductImage(product);
+
   return (
     <motion.article
       initial={{ opacity: 0, y: 16 }}
@@ -33,17 +36,13 @@ export default function ProductCard({
         href={`/products/${product.id}`}
         className="relative mb-5 block aspect-[4/5] overflow-hidden bg-paper"
       >
-        {product.image ? (
-          <Image
-            src={product.image}
-            alt={product.name}
-            fill
-            sizes="(max-width: 768px) 50vw, 25vw"
-            className="object-cover transition-opacity duration-700 group-hover:opacity-90"
-          />
-        ) : (
-          <div className="absolute inset-0 bg-paper" />
-        )}
+        <Image
+          src={imageSrc}
+          alt={product.name}
+          fill
+          sizes="(max-width: 768px) 50vw, 25vw"
+          className="object-cover object-center brightness-[1.03] contrast-[0.96] saturate-[0.88] transition-opacity duration-700 group-hover:opacity-90"
+        />
 
         {!product.in_stock ? (
           <span className="absolute left-0 top-0 bg-white px-3 py-1.5 text-[9px] uppercase tracking-[0.2em] text-muted">

@@ -9,7 +9,7 @@ const footerLinks = {
   ],
   marque: [
     { href: "/#histoire", label: "Notre histoire" },
-    { href: "/#", label: "Nos engagements" },
+    { href: "/#engagements", label: "Nos engagements" },
     { href: "/#", label: "Contact" },
   ],
 };

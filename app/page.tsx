@@ -2,6 +2,7 @@ import Hero from "@/components/home/Hero";
 import BrandStory from "@/components/home/BrandStory";
 import FeaturedProducts from "@/components/home/FeaturedProducts";
 import CategoryShowcase from "@/components/home/CategoryShowcase";
+import LifestyleGallery from "@/components/home/LifestyleGallery";
 import Benefits from "@/components/home/Benefits";
 import Testimonials from "@/components/home/Testimonials";
 import Newsletter from "@/components/home/Newsletter";
@@ -13,6 +14,7 @@ export default function Home() {
       <BrandStory />
       <FeaturedProducts />
       <CategoryShowcase />
+      <LifestyleGallery />
       <Benefits />
       <Testimonials />
       <Newsletter />

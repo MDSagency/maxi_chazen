@@ -84,20 +84,24 @@ export default function Navbar() {
             : "bg-white/80 backdrop-blur-sm",
         )}
       >
-        <Container className="flex h-16 items-center justify-between md:h-[4.5rem]">
-          <Link href="/" className="relative z-50 flex items-center">
+        <Container className="flex h-[4.75rem] items-center justify-between gap-6 sm:h-20 md:h-[5.5rem]">
+          <Link
+            href="/"
+            className="relative z-50 flex shrink-0 items-center py-1"
+            aria-label="Maxi Chazen — Accueil"
+          >
             <Image
               src={BRAND_IMAGES.logo}
               alt="Maxi Chazen"
-              width={120}
-              height={40}
-              className="h-7 w-auto object-contain md:h-8"
+              width={240}
+              height={80}
+              className="h-11 w-auto max-w-[11rem] object-contain object-left sm:h-12 sm:max-w-[12.5rem] md:h-14 md:max-w-[14rem] lg:h-[3.75rem] lg:max-w-[15.5rem]"
               priority
             />
           </Link>
 
           <nav
-            className="hidden items-center gap-10 md:flex"
+            className="hidden items-center gap-8 lg:gap-10 md:flex"
             aria-label="Navigation principale"
           >
             {navLinks.map((link) => (
@@ -111,7 +115,7 @@ export default function Navbar() {
             ))}
             <Link
               href="/panier"
-              className="inline-flex h-9 items-center gap-3 border border-line px-5 text-[11px] uppercase tracking-[0.2em] text-ink transition-colors duration-500 hover:border-ink/30"
+              className="inline-flex h-10 items-center gap-3 border border-line px-5 text-[11px] uppercase tracking-[0.2em] text-ink transition-colors duration-500 hover:border-ink/30"
             >
               Panier
               {cartCount > 0 ? (
@@ -124,7 +128,7 @@ export default function Navbar() {
 
           <button
             type="button"
-            className="relative z-50 flex h-10 w-10 flex-col items-center justify-center gap-1.5 md:hidden"
+            className="relative z-50 flex h-10 w-10 shrink-0 flex-col items-center justify-center gap-1.5 md:hidden"
             onClick={() => setMenuOpen((open) => !open)}
             aria-label={menuOpen ? "Fermer le menu" : "Ouvrir le menu"}
             aria-expanded={menuOpen}
@@ -161,9 +165,18 @@ export default function Navbar() {
             className="fixed inset-0 z-40 bg-white md:hidden"
           >
             <nav
-              className="flex h-full flex-col items-center justify-center gap-10"
+              className="flex h-full flex-col items-center justify-center gap-10 px-6"
               aria-label="Navigation mobile"
             >
+              <Link href="/" onClick={() => setMenuOpen(false)} className="mb-4">
+                <Image
+                  src={BRAND_IMAGES.logo}
+                  alt="Maxi Chazen"
+                  width={200}
+                  height={64}
+                  className="h-14 w-auto object-contain"
+                />
+              </Link>
               {navLinks.map((link, index) => (
                 <motion.div
                   key={link.href}
