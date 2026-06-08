@@ -1,11 +1,14 @@
 "use client";
 
 import Link from "next/link";
+import { motion } from "framer-motion";
 import Container from "@/components/ui/Container";
 import SectionHeader from "@/components/ui/SectionHeader";
-import FadeIn from "@/components/motion/FadeIn";
 import EditorialImage from "@/components/ui/EditorialImage";
+import ClipReveal from "@/components/motion/ClipReveal";
+import StaggerGroup, { StaggerItem } from "@/components/motion/StaggerGroup";
 import { BRAND_IMAGES } from "@/lib/images";
+import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
 
 const categories = [
   {
@@ -35,6 +38,8 @@ const categories = [
 ];
 
 export default function CategoryShowcase() {
+  const reduced = usePrefersReducedMotion();
+
   return (
     <section className="bg-surface section-editorial">
       <Container>
@@ -45,31 +50,42 @@ export default function CategoryShowcase() {
           align="center"
         />
 
-        <div className="grid gap-6 md:grid-cols-3 md:gap-8">
+        <StaggerGroup className="grid gap-8 md:grid-cols-3 md:gap-8" stagger={0.12}>
           {categories.map((category, index) => (
-            <FadeIn key={category.title} delay={index * 0.08}>
-              <Link href={category.href} className="group block">
-                <EditorialImage
-                  src={category.image}
-                  alt={category.alt}
-                  aspect="portrait"
-                  sizes="(max-width: 768px) 100vw, 33vw"
-                  className="mb-5 luxury-shadow transition-opacity duration-700 group-hover:opacity-90"
-                />
-                <p className="eyebrow mb-2">Collection</p>
-                <h3 className="mb-2 font-display text-2xl text-ink md:text-[1.65rem]">
-                  {category.title}
-                </h3>
-                <p className="mb-4 text-sm font-light leading-relaxed text-muted">
-                  {category.description}
-                </p>
-                <span className="inline-block border-b border-ink/30 pb-0.5 text-[10px] uppercase tracking-[0.22em] text-ink transition-colors duration-500 group-hover:border-brand-blue group-hover:text-brand-blue">
-                  Découvrir
-                </span>
-              </Link>
-            </FadeIn>
+            <StaggerItem key={category.title}>
+              <motion.div
+                whileHover={reduced ? undefined : { y: -6 }}
+                transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
+              >
+                <Link href={category.href} className="group block text-center md:text-left">
+                  <ClipReveal direction="up" delay={index * 0.06}>
+                    <EditorialImage
+                      src={category.image}
+                      alt={category.alt}
+                      aspect="portrait"
+                      hoverZoom
+                      sizes="(max-width: 768px) 100vw, 33vw"
+                      className="mb-5 luxury-shadow"
+                    />
+                  </ClipReveal>
+                  <p className="eyebrow mb-2">Collection</p>
+                  <h3 className="mb-2 font-display text-2xl text-ink md:text-[1.65rem]">
+                    {category.title}
+                  </h3>
+                  <p className="mx-auto mb-5 max-w-xs text-sm font-light leading-relaxed text-muted md:mx-0">
+                    {category.description}
+                  </p>
+                  <span className="inline-flex items-center gap-2 border-b border-ink/30 pb-0.5 text-[10px] uppercase tracking-[0.22em] text-ink transition-all duration-500 group-hover:gap-3 group-hover:border-brand-blue group-hover:text-brand-blue">
+                    Découvrir
+                    <span className="transition-transform duration-500 group-hover:translate-x-1">
+                      →
+                    </span>
+                  </span>
+                </Link>
+              </motion.div>
+            </StaggerItem>
           ))}
-        </div>
+        </StaggerGroup>
       </Container>
     </section>
   );

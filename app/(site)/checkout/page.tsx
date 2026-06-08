@@ -1,15 +1,58 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
 import { fetchProducts } from "@/lib/api/client";
 import type { Product } from "@/lib/types";
 import { defaultShippingTable } from "@/lib/shippingRates";
+import Container from "@/components/ui/Container";
+import SectionHeader from "@/components/ui/SectionHeader";
+import Button from "@/components/ui/Button";
+import { cn } from "@/lib/cn";
 
 type CartItem = { id: string; quantity: number };
 
+const fieldClassName =
+  "w-full border border-line bg-transparent px-4 py-3 text-sm font-light text-ink outline-none transition-colors duration-500 focus:border-ink";
+const labelClassName = "block text-[11px] uppercase tracking-[0.18em] text-muted";
+
+function SummaryRow({
+  label,
+  value,
+  emphasis = false,
+}: {
+  label: string;
+  value: string;
+  emphasis?: boolean;
+}) {
+  return (
+    <div
+      className={cn(
+        "flex items-center justify-between py-4",
+        emphasis ? "border-t border-line" : "border-b border-line",
+      )}
+    >
+      <span
+        className={cn(
+          "text-sm font-light",
+          emphasis
+            ? "text-[11px] uppercase tracking-[0.18em] text-ink"
+            : "text-muted",
+        )}
+      >
+        {label}
+      </span>
+      <span
+        className={cn(
+          emphasis ? "font-display text-2xl text-ink" : "text-sm text-ink",
+        )}
+      >
+        {value}
+      </span>
+    </div>
+  );
+}
+
 export default function CheckoutPage() {
-  const router = useRouter();
   const [productsList, setProductsList] = useState<Product[]>([]);
   const [cart, setCart] = useState<CartItem[]>([]);
   const [loading, setLoading] = useState(true);
@@ -135,12 +178,9 @@ export default function CheckoutPage() {
 
   if (loading) {
     return (
-      <section className="page-loader-wrap">
-        <div className="page-loader" role="status" aria-live="polite">
-          <span className="loader-dot" aria-hidden="true"></span>
-          <p>Chargement de la commande...</p>
-        </div>
-      </section>
+      <div className="flex min-h-[60vh] items-center justify-center pt-36">
+        <div className="h-8 w-8 animate-spin border border-line border-t-ink" />
+      </div>
     );
   }
 
@@ -150,153 +190,218 @@ export default function CheckoutPage() {
     const paidTotal = finalOrderSummary?.total ?? totalPrice;
 
     return (
-      <div className="checkout-page">
-        <div className="order-success-card">
-          <div className="order-success-badge">Commande confirmée</div>
-          <h1>Merci {fullName}</h1>
-          <p className="order-success-text">
-            Votre commande a été enregistrée avec succès.
-          </p>
+      <section className="bg-surface pb-32 pt-36 md:pt-48">
+        <Container className="max-w-2xl">
+          <div className="border border-line bg-paper p-8 md:p-12">
+            <p className="eyebrow mb-5 text-brand-blue">Commande confirmée</p>
+            <h1 className="font-display text-4xl text-ink md:text-5xl">
+              Merci {fullName}
+            </h1>
+            <p className="mt-6 text-[15px] font-light leading-[1.85] text-muted">
+              Votre commande a été enregistrée avec succès. Nous vous
+              contacterons très prochainement pour confirmer la livraison.
+            </p>
 
-          <div className="order-success-summary">
-            <div className="summary-row">
-              <span>Sous-total produits</span>
-              <strong>{paidSubtotal.toLocaleString("fr-FR")} DA</strong>
+            <div className="mt-10 border-t border-line">
+              <SummaryRow
+                label="Sous-total produits"
+                value={`${paidSubtotal.toLocaleString("fr-FR")} DA`}
+              />
+              <SummaryRow
+                label="Livraison"
+                value={`${paidShipping.toLocaleString("fr-FR")} DA`}
+              />
+              <SummaryRow
+                label="Total final"
+                value={`${paidTotal.toLocaleString("fr-FR")} DA`}
+                emphasis
+              />
             </div>
-            <div className="summary-row">
-              <span>Livraison</span>
-              <strong>{paidShipping.toLocaleString("fr-FR")} DA</strong>
-            </div>
-            <div className="summary-row total">
-              <span>Total final payé</span>
-              <strong>{paidTotal.toLocaleString("fr-FR")} DA</strong>
-            </div>
+
+            <Button href="/products" size="lg" className="mt-10 w-full sm:w-auto">
+              Continuer les achats
+            </Button>
           </div>
-
-          <button className="btn-confirm" onClick={() => router.push("/")}>
-            Continuer les achats
-          </button>
-        </div>
-      </div>
+        </Container>
+      </section>
     );
   }
 
   return (
-    <div className="checkout-page">
-      <h1 className="checkout-title">Récapitulatif de la commande</h1>
+    <section className="bg-surface pb-32 pt-36 md:pt-48">
+      <Container>
+        <SectionHeader
+          eyebrow="Commande"
+          title="Récapitulatif de la commande"
+          description="Renseignez vos informations de livraison pour finaliser votre achat."
+          className="mb-14 md:mb-20"
+        />
 
-      <div className="checkout-sides">
-        <div className="checkout-card">
-          <h2>Informations client</h2>
-          <form onSubmit={handleSubmit} className="checkout-form">
-            <label>
-              Nom complet *
-              <input
-                value={fullName}
-                onChange={(e) => setFullName(e.target.value)}
-                required
-              />
-            </label>
-            <label>
-              Numéro de téléphone *
-              <input
-                value={phone}
-                onChange={(e) => setPhone(e.target.value)}
-                required
-                placeholder="05XXXXXXXX"
-              />
-            </label>
-            <label>
-              Email (facultatif)
-              <input
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="votre@email.com"
-              />
-            </label>
+        <div className="grid gap-12 lg:grid-cols-[minmax(0,1fr)_360px] lg:gap-16">
+          <div className="border border-line bg-white p-8">
+            <h2 className="mb-8 font-display text-2xl text-ink md:text-3xl">
+              Informations client
+            </h2>
 
-            <label>
-              Transporteur
-              <select
-                value={carrier}
-                onChange={(e) => setCarrier(e.target.value)}
-              >
-                <option>Guepex</option>
-              </select>
-            </label>
-
-            <label>
-              Mode de livraison
-              <select
-                value={deliveryMethod}
-                onChange={(e) => setDeliveryMethod(e.target.value)}
-              >
-                <option>Retrait en magasin</option>
-                <option>Livraison à domicile</option>
-              </select>
-            </label>
-            <label>
-              Wilaya
-              <select
-                value={wilaya}
-                onChange={(e) => setWilaya(e.target.value)}
-              >
-                {Object.keys(defaultShippingTable).map((name) => (
-                  <option key={name}>{name}</option>
-                ))}
-              </select>
-            </label>
-
-            <label>
-              Notes de commande
-              <textarea
-                value={notes}
-                onChange={(e) => setNotes(e.target.value)}
-                rows={4}
-              />
-            </label>
-
-            <button type="submit" className="btn-confirm" disabled={submitting}>
-              {submitting
-                ? "Validation en cours..."
-                : `Valider et payer ${totalPrice.toLocaleString("fr-FR")} DA`}
-            </button>
-          </form>
-        </div>
-        <div className="checkout-card">
-          <h2>Résumé de la commande</h2>
-          <div className="summary-row">
-            <span>Sous-total</span>
-            <strong>{cartTotal.toLocaleString("fr-FR")} DA</strong>
-          </div>
-          <div className="summary-row">
-            <span>Livraison</span>
-            <strong>{shippingCost.toLocaleString("fr-FR")} DA</strong>
-          </div>
-          <div className="summary-row total">
-            <span>Total</span>
-            <strong>{totalPrice.toLocaleString("fr-FR")} DA</strong>
-          </div>
-
-          <h3>Récapitulatif des produits</h3>
-          {cart.map((cartItem) => {
-            const product = productsList.find((p) => p.id === cartItem.id);
-            if (!product) return null;
-            return (
-              <div key={product.id} className="product-line">
-                <span>
-                  {product.name} ×{cartItem.quantity}
+            <form onSubmit={handleSubmit} className="space-y-6">
+              <label className="block">
+                <span className={cn(labelClassName, "mb-3 block")}>
+                  Nom complet *
                 </span>
-                <span>
-                  {(product.price * cartItem.quantity).toLocaleString("fr-FR")}{" "}
-                  DA
+                <input
+                  value={fullName}
+                  onChange={(e) => setFullName(e.target.value)}
+                  className={fieldClassName}
+                  required
+                />
+              </label>
+
+              <label className="block">
+                <span className={cn(labelClassName, "mb-3 block")}>
+                  Numéro de téléphone *
                 </span>
+                <input
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value)}
+                  className={fieldClassName}
+                  required
+                  placeholder="05XXXXXXXX"
+                />
+              </label>
+
+              <label className="block">
+                <span className={cn(labelClassName, "mb-3 block")}>
+                  Email (facultatif)
+                </span>
+                <input
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className={fieldClassName}
+                  placeholder="votre@email.com"
+                />
+              </label>
+
+              <div className="grid gap-6 md:grid-cols-2">
+                <label className="block">
+                  <span className={cn(labelClassName, "mb-3 block")}>
+                    Transporteur
+                  </span>
+                  <select
+                    value={carrier}
+                    onChange={(e) => setCarrier(e.target.value)}
+                    className={fieldClassName}
+                  >
+                    <option>Guepex</option>
+                  </select>
+                </label>
+
+                <label className="block">
+                  <span className={cn(labelClassName, "mb-3 block")}>
+                    Mode de livraison
+                  </span>
+                  <select
+                    value={deliveryMethod}
+                    onChange={(e) => setDeliveryMethod(e.target.value)}
+                    className={fieldClassName}
+                  >
+                    <option>Retrait en magasin</option>
+                    <option>Livraison à domicile</option>
+                  </select>
+                </label>
               </div>
-            );
-          })}
-          {submitError ? <p className="form-error">{submitError}</p> : null}
+
+              <label className="block">
+                <span className={cn(labelClassName, "mb-3 block")}>Wilaya</span>
+                <select
+                  value={wilaya}
+                  onChange={(e) => setWilaya(e.target.value)}
+                  className={fieldClassName}
+                >
+                  {Object.keys(defaultShippingTable).map((name) => (
+                    <option key={name}>{name}</option>
+                  ))}
+                </select>
+              </label>
+
+              <label className="block">
+                <span className={cn(labelClassName, "mb-3 block")}>
+                  Notes de commande
+                </span>
+                <textarea
+                  value={notes}
+                  onChange={(e) => setNotes(e.target.value)}
+                  rows={4}
+                  className={cn(fieldClassName, "resize-y")}
+                />
+              </label>
+
+              <Button
+                type="submit"
+                size="lg"
+                className="w-full"
+                disabled={submitting}
+              >
+                {submitting
+                  ? "Validation en cours..."
+                  : `Valider et payer ${totalPrice.toLocaleString("fr-FR")} DA`}
+              </Button>
+            </form>
+          </div>
+
+          <aside className="border border-line bg-paper p-8 lg:sticky lg:top-36 lg:self-start">
+            <h2 className="mb-8 font-display text-2xl text-ink">
+              Résumé de la commande
+            </h2>
+
+            <SummaryRow
+              label="Sous-total"
+              value={`${cartTotal.toLocaleString("fr-FR")} DA`}
+            />
+            <SummaryRow
+              label="Livraison"
+              value={`${shippingCost.toLocaleString("fr-FR")} DA`}
+            />
+            <SummaryRow
+              label="Total"
+              value={`${totalPrice.toLocaleString("fr-FR")} DA`}
+              emphasis
+            />
+
+            <div className="mt-10 border-t border-line pt-8">
+              <p className="eyebrow mb-5">Produits</p>
+              <div className="space-y-4">
+                {cart.map((cartItem) => {
+                  const product = productsList.find((p) => p.id === cartItem.id);
+                  if (!product) return null;
+                  return (
+                    <div
+                      key={product.id}
+                      className="flex items-start justify-between gap-4 text-sm"
+                    >
+                      <span className="font-light text-muted">
+                        {product.name}{" "}
+                        <span className="text-muted-light">
+                          ×{cartItem.quantity}
+                        </span>
+                      </span>
+                      <span className="shrink-0 text-ink">
+                        {(product.price * cartItem.quantity).toLocaleString(
+                          "fr-FR",
+                        )}{" "}
+                        DA
+                      </span>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+
+            {submitError ? (
+              <p className="mt-6 text-sm text-rose-600">{submitError}</p>
+            ) : null}
+          </aside>
         </div>
-      </div>
-    </div>
+      </Container>
+    </section>
   );
 }

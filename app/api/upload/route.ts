@@ -71,9 +71,11 @@ export async function POST(request: Request) {
     storageKey = "";
   }
 
+  let image = null;
+
   if (productId && typeof productId === "string") {
     const count = await prisma.productImage.count({ where: { productId } });
-    await prisma.productImage.create({
+    image = await prisma.productImage.create({
       data: {
         productId,
         url,
@@ -92,5 +94,9 @@ export async function POST(request: Request) {
     });
   }
 
-  return NextResponse.json({ url, key: storageKey });
+  return NextResponse.json({
+    url,
+    key: storageKey,
+    image,
+  });
 }

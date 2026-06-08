@@ -1,8 +1,10 @@
 "use client";
 
+import { motion } from "framer-motion";
 import Container from "@/components/ui/Container";
 import SectionHeader from "@/components/ui/SectionHeader";
-import FadeIn from "@/components/motion/FadeIn";
+import StaggerGroup, { StaggerItem } from "@/components/motion/StaggerGroup";
+import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
 
 const testimonials = [
   {
@@ -26,6 +28,8 @@ const testimonials = [
 ];
 
 export default function Testimonials() {
+  const reduced = usePrefersReducedMotion();
+
   return (
     <section className="border-t border-line bg-surface section-editorial">
       <Container>
@@ -36,14 +40,25 @@ export default function Testimonials() {
           align="center"
         />
 
-        <div className="grid gap-8 md:grid-cols-3">
-          {testimonials.map((item, index) => (
-            <FadeIn key={item.author} delay={index * 0.08}>
-              <blockquote className="flex h-full flex-col border border-line bg-white p-8 md:p-10">
+        <StaggerGroup className="grid gap-6 md:grid-cols-3 md:gap-8" stagger={0.1}>
+          {testimonials.map((item) => (
+            <StaggerItem key={item.author}>
+              <motion.blockquote
+                whileHover={
+                  reduced
+                    ? undefined
+                    : {
+                        y: -4,
+                        borderColor: "rgba(0, 140, 202, 0.25)",
+                      }
+                }
+                transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+                className="flex h-full flex-col border border-line bg-white p-6 text-center md:p-10 md:text-left"
+              >
                 <p className="mb-6 text-[10px] uppercase tracking-[0.22em] text-muted-light">
                   Note · 5/5
                 </p>
-                <p className="flex-1 font-display text-xl font-light italic leading-[1.6] text-charcoal">
+                <p className="mx-auto flex-1 max-w-sm font-display text-xl font-light italic leading-[1.6] text-charcoal md:mx-0">
                   « {item.quote} »
                 </p>
                 <footer className="mt-10 border-t border-line pt-6">
@@ -54,10 +69,10 @@ export default function Testimonials() {
                     </p>
                   </cite>
                 </footer>
-              </blockquote>
-            </FadeIn>
+              </motion.blockquote>
+            </StaggerItem>
           ))}
-        </div>
+        </StaggerGroup>
       </Container>
     </section>
   );

@@ -8,105 +8,131 @@ import FadeIn from "@/components/motion/FadeIn";
 import EditorialImage from "@/components/ui/EditorialImage";
 import BrandMark from "@/components/ui/BrandMark";
 import AnchorLink from "@/components/ui/AnchorLink";
+import RevealText from "@/components/motion/RevealText";
+import LineReveal from "@/components/motion/LineReveal";
+import ClipReveal from "@/components/motion/ClipReveal";
+import StaggerGroup, { StaggerItem } from "@/components/motion/StaggerGroup";
+import CountStat from "@/components/motion/CountStat";
 import { BRAND_IMAGES } from "@/lib/images";
+import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
+
+const stats = [
+  { value: "4.9", label: "Note clients" },
+  { value: "100%", label: "Testé dermatologiquement" },
+  { value: "48h", label: "Livraison Algérie" },
+];
 
 export default function Hero() {
   const ref = useRef<HTMLElement>(null);
+  const reduced = usePrefersReducedMotion();
   const { scrollYProgress } = useScroll({
     target: ref,
     offset: ["start start", "end start"],
   });
-  const imageY = useTransform(scrollYProgress, [0, 1], ["0%", "8%"]);
+  const imageY = useTransform(scrollYProgress, [0, 1], ["0%", "10%"]);
+  const contentOpacity = useTransform(scrollYProgress, [0, 0.55], [1, 0.82]);
 
   return (
     <section
       ref={ref}
-      className="paper-grain relative overflow-hidden bg-surface section-editorial pt-36 md:pt-48"
+      className="paper-grain relative overflow-hidden bg-surface pb-20 sm:pb-28 md:pb-40 lg:pb-48 pt-20 sm:pt-[5.25rem] md:pt-24"
     >
-      <Container className="grid items-center gap-16 lg:grid-cols-2 lg:gap-24">
-        <div className="max-w-xl">
+      <div
+        className="pointer-events-none absolute -right-24 top-32 hidden h-72 w-72 rounded-full bg-brand-blue/[0.04] blur-3xl md:block"
+        aria-hidden
+      />
+
+      <Container className="grid items-start gap-10 lg:grid-cols-2 lg:gap-20">
+        <motion.div
+          style={reduced ? undefined : { opacity: contentOpacity }}
+          className="mx-auto max-w-xl text-center lg:mx-0 lg:text-left"
+        >
           <FadeIn>
-            <p className="eyebrow mb-8 text-brand-blue">Soins premium pour bébé</p>
+            <p className="eyebrow mb-3 text-brand-blue">
+              Soins premium pour bébé
+            </p>
+            <LineReveal align="left" className="mx-auto lg:mx-0" />
           </FadeIn>
 
-          <FadeIn delay={0.1}>
-            <h1 className="text-balance font-display text-[2.75rem] leading-[1.05] text-ink md:text-5xl lg:text-[4rem]">
-              L&apos;essentiel pour une enfance apaisée.
-            </h1>
-          </FadeIn>
+          <RevealText
+            text="L'essentiel pour une enfance apaisée."
+            as="h1"
+            className="mt-4 justify-center text-balance font-display text-[2.35rem] leading-[1.06] text-ink sm:text-[2.75rem] md:text-5xl lg:justify-start lg:text-[4rem]"
+          />
 
-          <FadeIn delay={0.2}>
-            <p className="mt-8 max-w-md text-[15px] font-light leading-[1.85] text-muted md:text-base">
+          <FadeIn delay={0.25} blur>
+            <p className="mx-auto mt-8 max-w-md text-[15px] font-light leading-[1.85] text-muted md:text-base lg:mx-0">
               Des soins doux, sûrs et élégants — formulés pour la peau délicate
               de votre bébé, avec la rigueur d&apos;une maison de luxe.
             </p>
           </FadeIn>
 
-          <FadeIn delay={0.3}>
-            <div className="mt-12 flex flex-wrap items-center gap-6">
-              <Button href="/products" size="lg">
+          <FadeIn delay={0.35}>
+            <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row sm:gap-6 lg:justify-start">
+              <Button href="/products" size="lg" className="w-full sm:w-auto">
                 Découvrir la collection
               </Button>
               <AnchorLink
                 href="/#histoire"
-                className="inline-flex h-11 items-center justify-center px-7 text-[10px] uppercase tracking-[0.2em] text-ink transition-colors duration-500 hover:text-charcoal"
+                className="group/link inline-flex h-12 w-full items-center justify-center gap-3 px-7 text-[10px] uppercase tracking-[0.2em] text-ink transition-colors duration-500 hover:text-brand-blue sm:w-auto"
               >
                 Notre histoire
+                <span className="inline-block transition-transform duration-500 group-hover/link:translate-x-1">
+                  →
+                </span>
               </AnchorLink>
             </div>
           </FadeIn>
 
-          <FadeIn delay={0.4}>
-            <div className="mt-16 grid grid-cols-3 gap-8 border-t border-line pt-10">
-              <div>
-                <p className="font-display text-3xl text-ink">4.9</p>
-                <p className="mt-1 text-[10px] uppercase tracking-[0.2em] text-muted-light">
-                  Note clients
-                </p>
-              </div>
-              <div>
-                <p className="font-display text-3xl text-ink">100%</p>
-                <p className="mt-1 text-[10px] uppercase tracking-[0.2em] text-muted-light">
-                  Testé dermatologiquement
-                </p>
-              </div>
-              <div>
-                <p className="font-display text-3xl text-ink">48h</p>
-                <p className="mt-1 text-[10px] uppercase tracking-[0.2em] text-muted-light">
-                  Livraison Algérie
-                </p>
-              </div>
-            </div>
-          </FadeIn>
-        </div>
+          <StaggerGroup
+            className="mt-14 grid grid-cols-3 gap-4 border-t border-line pt-10 sm:gap-8"
+            stagger={0.08}
+          >
+            {stats.map((stat) => (
+              <StaggerItem key={stat.label}>
+                <CountStat
+                  value={stat.value}
+                  label={stat.label}
+                  className="text-center lg:text-left"
+                />
+              </StaggerItem>
+            ))}
+          </StaggerGroup>
+        </motion.div>
 
-        <FadeIn delay={0.15} direction="none">
-          <motion.div style={{ y: imageY }} className="relative mx-auto w-full lg:mx-0">
-            <EditorialImage
-              src={BRAND_IMAGES.hero}
-              alt="Lien tendre entre parent et bébé — Maxi Chazen"
-              aspect="hero"
-              priority
-              sizes="(max-width: 1024px) 90vw, 45vw"
-              className="luxury-shadow-deep"
-            />
-
+        <div className="relative mx-auto w-full max-w-md lg:mx-0 lg:max-w-none">
+          <ClipReveal direction="up" delay={0.12} immediate>
             <motion.div
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 1, delay: 0.6, ease: [0.25, 0.1, 0.25, 1] }}
-              className="absolute -bottom-8 left-0 flex max-w-[300px] items-center gap-5 border border-line bg-white p-5 luxury-shadow md:-left-6"
+              style={reduced ? undefined : { y: imageY }}
+              className="relative"
             >
-              <BrandMark size="md" animated priority />
-              <div>
-                <p className="font-display text-lg text-ink">Maxi Chazen</p>
-                <p className="mt-1 text-sm font-light leading-relaxed text-charcoal">
-                  Baume barrière doux — formulé pour la peau délicate.
-                </p>
-              </div>
+              <EditorialImage
+                src={BRAND_IMAGES.hero}
+                alt="Lien tendre entre parent et bébé — Maxi Chazen"
+                aspect="hero"
+                priority
+                parallax
+                sizes="(max-width: 1024px) 90vw, 45vw"
+                className="luxury-shadow-deep"
+              />
+
+              <motion.div
+                initial={reduced ? false : { opacity: 0, y: 20, scale: 0.96 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                transition={{ duration: 1.1, delay: 0.65, ease: [0.22, 1, 0.36, 1] }}
+                className="absolute -bottom-6 left-1/2 flex w-[min(100%,300px)] -translate-x-1/2 items-center gap-5 border border-line bg-white p-5 luxury-shadow sm:-bottom-8 lg:left-0 lg:translate-x-0 lg:-translate-x-6"
+              >
+                <BrandMark size="md" animated priority />
+                <div className="text-left">
+                  <p className="font-display text-lg text-ink">Maxi Chazen</p>
+                  <p className="mt-1 text-sm font-light leading-relaxed text-charcoal">
+                    Baume barrière doux — formulé pour la peau délicate.
+                  </p>
+                </div>
+              </motion.div>
             </motion.div>
-          </motion.div>
-        </FadeIn>
+          </ClipReveal>
+        </div>
       </Container>
     </section>
   );

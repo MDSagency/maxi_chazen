@@ -1,8 +1,13 @@
 import type { StaticImageData } from "next/image";
 import babyWithMother from "./baby with mother  1.jpg";
+import babyAndMother2 from "./baby and mother 2.jpg";
+import babyAndParent1 from "./baby and parent 1.jpg";
 import baby1 from "./Baby 1 .jpg";
 import baby2 from "./baby 2.jpg";
 import baby3 from "./baby 3.jpg";
+import baby5 from "./baby 5.jpg";
+import baby6 from "./baby 6.jpg";
+import baby9 from "./baby 9.jpg";
 
 /** Static imports from lib/ → Next.js optimized asset paths */
 function asset(img: StaticImageData): string {
@@ -10,11 +15,9 @@ function asset(img: StaticImageData): string {
 }
 
 /**
- * Public assets — Maxi Chazen branded product photography.
- * unnamed*.jpg = official product flat-lays & lifestyle shots.
+ * Public assets — product flat-lays for catalog fallbacks only.
  */
 const PUBLIC = {
-  /** Hi-res PNG for UI — sharp on Retina displays */
   logo: "https://res.cloudinary.com/drfntkkhe/image/upload/v1777151440/image-removebg-preview_uuol8c.png",
   logoFavicon: "/logo.jfif",
   productsFlatlay: "/images/unnamed.jpg",
@@ -23,29 +26,32 @@ const PUBLIC = {
 } as const;
 
 /**
- * Smart visual map
+ * Homepage visual map (9 lib lifestyle shots — each used at least once)
  * ─────────────────────────────────────────────────────────
- * lib/baby with mother  → hero, confiance (lien parent-bébé)
- * lib/Baby 1            → produits naturels, story (routine soins)
- * lib/baby 2            → soins délicats (rituel bien-être)
- * lib/baby 3            → protection quotidienne (pureté, douceur)
- * public/unnamed.jpg    → collection complète (catégorie hygiène)
- * public/unnamed1.jpg   → ligne lotion/crème (catégorie soins)
- * public/unnamed2.jpg   → baume barrière (catégorie accessoires)
+ * baby with mother 1  → hero
+ * baby and mother 2   → histoire (main)
+ * baby and parent 1   → lifestyle · confiance parentale
+ * Baby 1              → histoire detail · produits naturels
+ * baby 2              → lifestyle rituel · soins délicats
+ * baby 3              → catégorie protection
+ * baby 5              → histoire detail · lifestyle pureté
+ * baby 6              → catégorie soins du corps
+ * baby 9              → catégorie hygiène · protection quotidienne
  */
 export const BRAND_IMAGES = {
   logo: PUBLIC.logo,
 
   hero: asset(babyWithMother),
 
-  story: asset(baby1),
-  storyDetail: asset(baby3),
+  story: asset(babyAndMother2),
+  storyPortrait: asset(baby1),
+  storyDetail: asset(baby5),
 
   editorial: {
     soinsDelicats: asset(baby2),
     produitsNaturels: asset(baby1),
-    protectionQuotidienne: asset(baby3),
-    confianceParentale: asset(babyWithMother),
+    protectionQuotidienne: asset(baby9),
+    confianceParentale: asset(babyAndParent1),
   },
 
   categories: {
@@ -55,9 +61,10 @@ export const BRAND_IMAGES = {
   },
 
   lifestyle: {
-    texture: asset(baby3),
-    nursery: asset(baby2),
-    productFlatlay: PUBLIC.productsFlatlay,
+    collection: PUBLIC.productsFlatlay,
+    rituel: asset(baby2),
+    famille: asset(babyAndParent1),
+    purete: asset(baby5),
   },
 
   products: {
@@ -112,7 +119,7 @@ export function productDetailAccents(category?: string): [string, string] {
     return [BRAND_IMAGES.products.balm, asset(baby3)];
   }
   if (key.includes("gel") || key.includes("shampoing") || key.includes("hygi")) {
-    return [BRAND_IMAGES.products.collection, asset(baby2)];
+    return [BRAND_IMAGES.products.collection, asset(baby6)];
   }
 
   return [BRAND_IMAGES.products.nursery, asset(baby1)];

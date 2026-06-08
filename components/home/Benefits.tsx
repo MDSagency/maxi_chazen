@@ -1,10 +1,12 @@
 "use client";
 
-import FadeIn from "@/components/motion/FadeIn";
+import { motion } from "framer-motion";
 import Container from "@/components/ui/Container";
 import SectionHeader from "@/components/ui/SectionHeader";
 import EditorialImage from "@/components/ui/EditorialImage";
+import StaggerGroup, { StaggerItem } from "@/components/motion/StaggerGroup";
 import { BRAND_IMAGES } from "@/lib/images";
+import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
 
 const benefits = [
   {
@@ -38,6 +40,8 @@ const benefits = [
 ];
 
 export default function Benefits() {
+  const reduced = usePrefersReducedMotion();
+
   return (
     <section
       id="engagements"
@@ -51,32 +55,39 @@ export default function Benefits() {
           align="center"
         />
 
-        <div className="grid gap-8 md:grid-cols-2 lg:gap-10">
-          {benefits.map((benefit, index) => (
-            <FadeIn key={benefit.title} delay={index * 0.06}>
-              <article className="group flex h-full flex-col border border-line bg-white transition-colors duration-700 hover:bg-paper">
+        <StaggerGroup className="grid gap-6 md:grid-cols-2 md:gap-8 lg:gap-10" stagger={0.1}>
+          {benefits.map((benefit) => (
+            <StaggerItem key={benefit.title}>
+              <motion.article
+                whileHover={
+                  reduced
+                    ? undefined
+                    : { y: -4, boxShadow: "0 40px 80px -24px rgba(17, 17, 17, 0.08)" }
+                }
+                transition={{ duration: 0.65, ease: [0.22, 1, 0.36, 1] }}
+                className="group flex h-full flex-col overflow-hidden border border-line bg-white"
+              >
                 <EditorialImage
                   src={benefit.image}
                   alt={benefit.alt}
                   aspect="landscape"
+                  hoverZoom
                   sizes="(max-width: 768px) 100vw, 50vw"
                   className="luxury-shadow"
                 />
-                <div className="flex flex-1 flex-col p-8 md:p-10">
-                  <span className="mb-5 font-display text-2xl text-muted-light">
+                <div className="flex flex-1 flex-col p-6 text-center md:p-10 md:text-left">
+                  <span className="mb-5 font-display text-2xl text-muted-light transition-colors duration-500 group-hover:text-brand-blue">
                     {benefit.num}
                   </span>
-                  <h3 className="mb-4 font-display text-2xl text-ink">
-                    {benefit.title}
-                  </h3>
-                  <p className="text-[14px] font-light leading-[1.8] text-muted">
+                  <h3 className="mb-4 font-display text-2xl text-ink">{benefit.title}</h3>
+                  <p className="mx-auto max-w-sm text-[14px] font-light leading-[1.8] text-muted md:mx-0">
                     {benefit.text}
                   </p>
                 </div>
-              </article>
-            </FadeIn>
+              </motion.article>
+            </StaggerItem>
           ))}
-        </div>
+        </StaggerGroup>
       </Container>
     </section>
   );

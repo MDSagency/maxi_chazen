@@ -9,6 +9,7 @@ import { BRAND_IMAGES } from "@/lib/images";
 import Container from "@/components/ui/Container";
 import AnchorLink from "@/components/ui/AnchorLink";
 import { isHomeAnchor, parseAnchorHref } from "@/lib/anchor";
+import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
 
 const navLinks = [
   { href: "/", label: "Accueil" },
@@ -17,12 +18,13 @@ const navLinks = [
 ];
 
 const linkClass =
-  "text-[11px] uppercase tracking-[0.2em] text-muted transition-colors duration-500 hover:text-ink";
+  "relative text-[11px] uppercase tracking-[0.2em] text-muted transition-colors duration-500 hover:text-ink after:absolute after:-bottom-1 after:left-0 after:h-px after:w-0 after:bg-brand-blue after:transition-all after:duration-500 hover:after:w-full";
 
 export default function Navbar() {
   const [cartCount, setCartCount] = useState(0);
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const reduced = usePrefersReducedMotion();
 
   useEffect(() => {
     function updateCount(value?: number) {
@@ -109,9 +111,17 @@ export default function Navbar() {
 
   return (
     <>
-      <header
+      <motion.header
+        initial={false}
+        animate={{
+          paddingTop: scrolled ? 0 : 0,
+          boxShadow: scrolled
+            ? "0 1px 0 rgba(17,17,17,0.06)"
+            : "0 0 0 rgba(0,0,0,0)",
+        }}
+        transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
         className={cn(
-          "fixed inset-x-0 top-0 z-50 transition-all duration-700",
+          "fixed inset-x-0 top-0 z-50 transition-colors duration-700",
           scrolled
             ? "border-b border-line bg-white/95 backdrop-blur-md"
             : "bg-white/80 backdrop-blur-sm",
@@ -145,17 +155,26 @@ export default function Navbar() {
                 className={linkClass}
               />
             ))}
-            <Link
-              href="/panier"
-              className="inline-flex h-10 items-center gap-3 border border-line px-5 text-[11px] uppercase tracking-[0.2em] text-ink transition-colors duration-500 hover:border-ink/30"
-            >
-              Panier
-              {cartCount > 0 ? (
-                <span className="min-w-[1.25rem] bg-brand-yellow px-1.5 py-0.5 text-center text-[9px] font-normal text-ink">
-                  {cartCount}
-                </span>
-              ) : null}
-            </Link>
+            <motion.div whileHover={reduced ? undefined : { scale: 1.02 }}>
+              <Link
+                href="/panier"
+                className="inline-flex h-10 items-center gap-3 border border-line px-5 text-[11px] uppercase tracking-[0.2em] text-ink transition-colors duration-500 hover:border-brand-blue/40 hover:bg-paper"
+              >
+                Panier
+                <AnimatePresence>
+                  {cartCount > 0 ? (
+                    <motion.span
+                      key={cartCount}
+                      initial={reduced ? false : { scale: 0.6, opacity: 0 }}
+                      animate={{ scale: 1, opacity: 1 }}
+                      className="min-w-[1.25rem] bg-brand-yellow px-1.5 py-0.5 text-center text-[9px] font-normal text-ink"
+                    >
+                      {cartCount}
+                    </motion.span>
+                  ) : null}
+                </AnimatePresence>
+              </Link>
+            </motion.div>
           </nav>
 
           <button
@@ -185,7 +204,7 @@ export default function Navbar() {
             />
           </button>
         </Container>
-      </header>
+      </motion.header>
 
       <AnimatePresence>
         {menuOpen ? (
@@ -193,28 +212,42 @@ export default function Navbar() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.5 }}
-            className="fixed inset-0 z-40 bg-white md:hidden"
+            transition={{ duration: 0.45 }}
+            className="fixed inset-0 z-40 bg-white/98 backdrop-blur-md md:hidden"
           >
-            <nav
-              className="flex h-full flex-col items-center justify-center gap-10 px-6"
+            <motion.nav
+              initial={reduced ? false : { clipPath: "inset(0 0 100% 0)" }}
+              animate={{ clipPath: "inset(0 0 0 0)" }}
+              exit={{ clipPath: "inset(0 0 100% 0)" }}
+              transition={{ duration: 0.65, ease: [0.22, 1, 0.36, 1] }}
+              className="flex h-full flex-col items-center justify-center gap-8 px-6"
               aria-label="Navigation mobile"
             >
-              <Link href="/" onClick={() => setMenuOpen(false)} className="mb-4">
-                <Image
-                  src={BRAND_IMAGES.logo}
-                  alt="Maxi Chazen"
-                  width={200}
-                  height={64}
-                  className="h-14 w-auto object-contain"
-                />
-              </Link>
+              <motion.div
+                initial={reduced ? false : { opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.1, duration: 0.5 }}
+              >
+                <Link href="/" onClick={() => setMenuOpen(false)} className="mb-2 block">
+                  <Image
+                    src={BRAND_IMAGES.logo}
+                    alt="Maxi Chazen"
+                    width={200}
+                    height={64}
+                    className="mx-auto h-14 w-auto object-contain"
+                  />
+                </Link>
+              </motion.div>
               {navLinks.map((link, index) => (
                 <motion.div
                   key={link.href}
-                  initial={{ opacity: 0, y: 12 }}
+                  initial={reduced ? false : { opacity: 0, y: 18 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.08 + index * 0.05, duration: 0.6 }}
+                  transition={{
+                    delay: 0.14 + index * 0.07,
+                    duration: 0.55,
+                    ease: [0.22, 1, 0.36, 1],
+                  }}
                 >
                   <NavItem
                     href={link.href}
@@ -225,19 +258,19 @@ export default function Navbar() {
                 </motion.div>
               ))}
               <motion.div
-                initial={{ opacity: 0, y: 12 }}
+                initial={reduced ? false : { opacity: 0, y: 18 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.3, duration: 0.6 }}
+                transition={{ delay: 0.38, duration: 0.55 }}
               >
                 <Link
                   href="/panier"
                   onClick={() => setMenuOpen(false)}
-                  className="inline-flex items-center gap-3 border border-ink px-8 py-3 text-[10px] uppercase tracking-[0.22em] text-ink"
+                  className="inline-flex items-center gap-3 border border-ink px-8 py-3 text-[10px] uppercase tracking-[0.22em] text-ink transition-colors duration-500 hover:bg-paper"
                 >
                   Panier {cartCount > 0 ? `· ${cartCount}` : ""}
                 </Link>
               </motion.div>
-            </nav>
+            </motion.nav>
           </motion.div>
         ) : null}
       </AnimatePresence>

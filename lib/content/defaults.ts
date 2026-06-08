@@ -20,7 +20,7 @@ export const DEFAULT_WEBSITE_CONTENT = {
       id: "banner-1",
       title: "Nouvelle collection",
       subtitle: "Soins délicats pour les premiers mois",
-      imageUrl: BRAND_IMAGES.categories.soins,
+      imageUrl: BRAND_IMAGES.story,
       link: "/products",
       active: true,
     },
@@ -54,9 +54,9 @@ export const DEFAULT_WEBSITE_CONTENT = {
   ],
   homepage_images: {
     lifestyle: [
-      BRAND_IMAGES.lifestyle.texture,
-      BRAND_IMAGES.lifestyle.nursery,
-      BRAND_IMAGES.lifestyle.productFlatlay,
+      BRAND_IMAGES.lifestyle.collection,
+      BRAND_IMAGES.lifestyle.rituel,
+      BRAND_IMAGES.lifestyle.famille,
     ],
   },
   footer: {

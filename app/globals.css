@@ -78,7 +78,7 @@
   }
 
   .section-editorial {
-    @apply py-28 md:py-40 lg:py-48;
+    @apply py-20 sm:py-28 md:py-40 lg:py-48;
   }
 
   .paper-grain {
@@ -114,6 +114,10 @@
     @apply h-px w-full bg-line;
   }
 
+  .page-top {
+    @apply pt-20 sm:pt-[5.25rem] md:pt-24;
+  }
+
   .anchor-section {
     scroll-margin-top: 5.75rem;
   }
@@ -130,5 +134,29 @@
 
   .hover-lift:hover {
     box-shadow: 0 40px 80px -24px rgba(17, 17, 17, 0.08);
+  }
+
+  .mobile-center {
+    @apply text-center md:text-left;
+  }
+
+  .mobile-center-flex {
+    @apply flex flex-col items-center md:items-start;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html.lenis,
+  html.lenis body {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
 }

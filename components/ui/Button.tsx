@@ -1,7 +1,9 @@
 "use client";
 
 import Link from "next/link";
+import { motion } from "framer-motion";
 import { cn } from "@/lib/cn";
+import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
 
 type ButtonVariant = "primary" | "secondary" | "ghost" | "outline";
 type ButtonSize = "sm" | "md" | "lg";
@@ -32,7 +34,7 @@ const variantStyles: Record<ButtonVariant, string> = {
   ghost:
     "bg-transparent text-ink hover:text-charcoal border border-transparent",
   outline:
-    "border border-ink/20 bg-transparent text-ink hover:border-ink/50",
+    "border border-ink/20 bg-transparent text-ink hover:border-ink/50 hover:bg-paper/60",
 };
 
 const sizeStyles: Record<ButtonSize, string> = {
@@ -41,6 +43,35 @@ const sizeStyles: Record<ButtonSize, string> = {
   lg: "h-12 px-10 text-[10px] tracking-[0.22em] uppercase",
 };
 
+function ButtonInner({
+  children,
+  className,
+  variant = "primary",
+  size = "md",
+}: ButtonBaseProps) {
+  const reduced = usePrefersReducedMotion();
+
+  return (
+    <motion.span
+      className={cn(
+        "group/btn relative inline-flex items-center justify-center overflow-hidden font-sans font-normal transition-colors duration-500 ease-[cubic-bezier(0.25,0.1,0.25,1)] disabled:cursor-not-allowed disabled:opacity-40",
+        variantStyles[variant],
+        sizeStyles[size],
+        className,
+      )}
+      whileTap={reduced ? undefined : { scale: 0.97 }}
+      whileHover={reduced ? undefined : { y: -1 }}
+      transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+    >
+      <span
+        className="pointer-events-none absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/25 to-transparent transition-transform duration-700 ease-out group-hover/btn:translate-x-full"
+        aria-hidden
+      />
+      <span className="relative z-[1]">{children}</span>
+    </motion.span>
+  );
+}
+
 export default function Button({
   children,
   className,
@@ -48,26 +79,27 @@ export default function Button({
   size = "md",
   ...props
 }: ButtonProps) {
-  const classes = cn(
-    "inline-flex items-center justify-center font-sans font-normal transition-all duration-500 ease-[cubic-bezier(0.25,0.1,0.25,1)] disabled:cursor-not-allowed disabled:opacity-40",
-    variantStyles[variant],
-    sizeStyles[size],
-    className,
-  );
-
   if ("href" in props && props.href) {
     const { href, ...linkProps } = props;
     return (
-      <Link href={href} className={classes} {...linkProps}>
-        {children}
+      <Link href={href} className="inline-flex" {...linkProps}>
+        <ButtonInner variant={variant} size={size} className={className}>
+          {children}
+        </ButtonInner>
       </Link>
     );
   }
 
-  const { ...buttonProps } = props as ButtonAsButton;
+  const { disabled, ...buttonProps } = props as ButtonAsButton;
   return (
-    <button className={classes} {...buttonProps}>
-      {children}
+    <button
+      className="inline-flex disabled:cursor-not-allowed"
+      disabled={disabled}
+      {...buttonProps}
+    >
+      <ButtonInner variant={variant} size={size} className={className}>
+        {children}
+      </ButtonInner>
     </button>
   );
 }

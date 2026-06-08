@@ -11,8 +11,8 @@ import Button from "@/components/ui/Button";
 import ProductCard from "@/components/commerce/ProductCard";
 import CartToast from "@/components/commerce/CartToast";
 import FadeIn from "@/components/motion/FadeIn";
-import EditorialImage from "@/components/ui/EditorialImage";
-import { productDetailAccents, resolveProductImage } from "@/lib/images";
+import ProductGallery from "@/components/commerce/ProductGallery";
+import { getProductGallery } from "@/lib/product-images";
 
 const trustPoints = [
   "Testé dermatologiquement",
@@ -78,8 +78,7 @@ export default function ProductDetailPage() {
     );
   }
 
-  const mainImage = resolveProductImage(product);
-  const [accentA, accentB] = productDetailAccents(product.category);
+  const galleryImages = getProductGallery(product);
 
   return (
     <>
@@ -102,30 +101,10 @@ export default function ProductDetailPage() {
 
           <div className="grid gap-16 lg:grid-cols-2 lg:gap-24">
             <FadeIn>
-              <div className="space-y-4">
-                <EditorialImage
-                  src={mainImage}
-                  alt={product.name}
-                  aspect="portrait"
-                  priority
-                  sizes="(max-width: 1024px) 100vw, 50vw"
-                  className="luxury-shadow-deep"
-                />
-                <div className="grid grid-cols-2 gap-4">
-                  <EditorialImage
-                    src={accentA}
-                    alt="Photographie produit Maxi Chazen"
-                    aspect="landscape"
-                    sizes="(max-width: 1024px) 50vw, 25vw"
-                  />
-                  <EditorialImage
-                    src={accentB}
-                    alt="Univers de soin Maxi Chazen"
-                    aspect="landscape"
-                    sizes="(max-width: 1024px) 50vw, 25vw"
-                  />
-                </div>
-              </div>
+              <ProductGallery
+                images={galleryImages}
+                productName={product.name}
+              />
             </FadeIn>
 
             <div className="lg:sticky lg:top-36 lg:self-start">
@@ -139,9 +118,9 @@ export default function ProductDetailPage() {
                 </p>
 
                 <p className="mt-8 text-[15px] font-light leading-[1.85] text-muted">
-                  Un soin premium formulé pour la peau délicate de bébé. Texture
-                  légère, absorption rapide et fini confortable — pour des
-                  moments de soin sereins, chaque jour.
+                  {product.shortDescription ||
+                    product.description ||
+                    "Un soin premium formulé pour la peau délicate de bébé."}
                 </p>
 
                 <ul className="mt-10 space-y-4 border-y border-line py-8">

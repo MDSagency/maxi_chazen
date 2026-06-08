@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useMemo, useState, useTransition } from "react";
+import { useEffect, useMemo, useState, useTransition } from "react";
 import {
   createProduct,
   deleteProduct,
@@ -9,16 +9,14 @@ import {
   updateProduct,
   deleteProductImage,
   reorderProductImages,
+  getAdminProduct,
 } from "@/lib/actions/products";
 import EmptyState from "@/components/admin/EmptyState";
+import ProductImageUploader, {
+  type ProductImageItem,
+} from "@/components/admin/ProductImageUploader";
 
 type Category = { id: string; name: string };
-type ProductImage = {
-  id: string;
-  url: string;
-  sortOrder: number;
-  isPrimary: boolean;
-};
 type Product = {
   id: string;
   name: string;
@@ -31,7 +29,7 @@ type Product = {
   published: boolean;
   categoryId: string | null;
   category: { name: string } | null;
-  images: ProductImage[];
+  images: ProductImageItem[];
 };
 
 const emptyForm = {
@@ -60,6 +58,9 @@ export default function ProductsManager({
   const [filter, setFilter] = useState<"all" | "published" | "draft">("all");
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
+  const [pendingImages, setPendingImages] = useState<
+    { id: string; url: string; file: File }[]
+  >([]);
   const [pending, startTransition] = useTransition();
 
   const filtered = useMemo(() => {
@@ -76,13 +77,31 @@ export default function ProductsManager({
     });
   }, [products, search, filter]);
 
+  const activeProduct = editingId
+    ? products.find((p) => p.id === editingId)
+    : null;
+
+  useEffect(() => {
+    return () => {
+      pendingImages.forEach((p) => URL.revokeObjectURL(p.url));
+    };
+  }, [pendingImages]);
+
+  function clearPending() {
+    pendingImages.forEach((p) => URL.revokeObjectURL(p.url));
+    setPendingImages([]);
+  }
+
   function resetForm() {
     setEditingId(null);
     setForm(emptyForm);
     setError("");
+    setMessage("");
+    clearPending();
   }
 
   function startEdit(product: Product) {
+    clearPending();
     setEditingId(product.id);
     setForm({
       name: product.name,
@@ -95,10 +114,15 @@ export default function ProductsManager({
       featured: product.featured,
       published: product.published,
     });
+    setMessage("");
+    setError("");
     window.scrollTo({ top: 0, behavior: "smooth" });
   }
 
-  async function uploadImage(productId: string, file: File) {
+  async function uploadImageFile(
+    productId: string,
+    file: File,
+  ): Promise<ProductImageItem | null> {
     const body = new FormData();
     body.append("file", file);
     body.append("folder", "products");
@@ -107,7 +131,145 @@ export default function ProductsManager({
     const response = await fetch("/api/upload", { method: "POST", body });
     const data = await response.json();
     if (!response.ok) throw new Error(data.error ?? "Upload échoué.");
-    return data;
+    return data.image as ProductImageItem | null;
+  }
+
+  async function uploadPendingToProduct(productId: string) {
+    if (pendingImages.length === 0) return;
+
+    const uploaded: ProductImageItem[] = [];
+    for (const item of pendingImages) {
+      const image = await uploadImageFile(productId, item.file);
+      if (image) uploaded.push(image);
+    }
+
+    clearPending();
+
+    if (uploaded.length > 0) {
+      setProducts((current) =>
+        current.map((p) =>
+          p.id === productId
+            ? { ...p, images: [...p.images, ...uploaded] }
+            : p,
+        ),
+      );
+    }
+
+    const refreshed = await getAdminProduct(productId);
+    if (refreshed) {
+      setProducts((current) =>
+        current.map((p) =>
+          p.id === productId
+            ? {
+                ...p,
+                images: refreshed.images.map((img) => ({
+                  id: img.id,
+                  url: img.url,
+                  sortOrder: img.sortOrder,
+                  isPrimary: img.isPrimary,
+                })),
+              }
+            : p,
+        ),
+      );
+    }
+  }
+
+  async function handleImageUpload(files: File[]) {
+    if (!editingId) {
+      setPendingImages((current) => [
+        ...current,
+        ...files.map((file) => ({
+          id: `pending-${crypto.randomUUID()}`,
+          url: URL.createObjectURL(file),
+          file,
+        })),
+      ]);
+      setMessage(
+        `${files.length} image(s) prête(s). Cliquez « Créer le produit » pour les envoyer sur R2.`,
+      );
+      return;
+    }
+
+    for (const file of files) {
+      const image = await uploadImageFile(editingId, file);
+      if (image) {
+        setProducts((current) =>
+          current.map((p) =>
+            p.id === editingId
+              ? { ...p, images: [...p.images, image] }
+              : p,
+          ),
+        );
+      }
+    }
+
+    const refreshed = await getAdminProduct(editingId);
+    if (refreshed) {
+      setProducts((current) =>
+        current.map((p) =>
+          p.id === editingId
+            ? {
+                ...p,
+                images: refreshed.images.map((img) => ({
+                  id: img.id,
+                  url: img.url,
+                  sortOrder: img.sortOrder,
+                  isPrimary: img.isPrimary,
+                })),
+              }
+            : p,
+        ),
+      );
+    }
+
+    setMessage("Image(s) ajoutée(s) avec succès.");
+  }
+
+  async function handleImageDelete(imageId: string) {
+    if (imageId.startsWith("pending-")) {
+      setPendingImages((current) => {
+        const item = current.find((p) => p.id === imageId);
+        if (item) URL.revokeObjectURL(item.url);
+        return current.filter((p) => p.id !== imageId);
+      });
+      return;
+    }
+
+    if (!editingId) return;
+    await deleteProductImage(imageId);
+    setProducts((current) =>
+      current.map((p) =>
+        p.id === editingId
+          ? { ...p, images: p.images.filter((img) => img.id !== imageId) }
+          : p,
+      ),
+    );
+    setMessage("Image supprimée.");
+  }
+
+  async function handleImageReorder(imageIds: string[]) {
+    if (!editingId) return;
+    const realIds = imageIds.filter((id) => !id.startsWith("pending-"));
+    if (realIds.length === 0) return;
+    await reorderProductImages(editingId, realIds);
+    setProducts((current) =>
+      current.map((p) => {
+        if (p.id !== editingId) return p;
+        const map = new Map(p.images.map((img) => [img.id, img]));
+        return {
+          ...p,
+          images: realIds
+            .map((id, index) => {
+              const img = map.get(id);
+              return img
+                ? { ...img, sortOrder: index, isPrimary: index === 0 }
+                : null;
+            })
+            .filter((img): img is ProductImageItem => img !== null),
+        };
+      }),
+    );
   }
 
   function onSubmit() {
@@ -130,20 +292,39 @@ export default function ProductsManager({
       try {
         if (editingId) {
           const updated = await updateProduct(editingId, payload);
+          await uploadPendingToProduct(editingId);
           setProducts((current) =>
             current.map((p) =>
               p.id === editingId
-                ? { ...p, ...updated, category: categories.find((c) => c.id === updated.categoryId) ? { name: categories.find((c) => c.id === updated.categoryId)!.name } : null }
+                ? {
+                    ...p,
+                    ...updated,
+                    category: categories.find((c) => c.id === updated.categoryId)
+                      ? {
+                          name: categories.find(
+                            (c) => c.id === updated.categoryId,
+                          )!.name,
+                        }
+                      : null,
+                  }
                 : p,
             ),
           );
           setMessage("Produit mis à jour.");
         } else {
           const created = await createProduct(payload);
-          setProducts((current) => [
-            { ...created, category: categories.find((c) => c.id === created.categoryId) ? { name: categories.find((c) => c.id === created.categoryId)!.name } : null, images: [] },
-            ...current,
-          ]);
+          const newProduct: Product = {
+            ...created,
+            category: categories.find((c) => c.id === created.categoryId)
+              ? {
+                  name: categories.find((c) => c.id === created.categoryId)!
+                    .name,
+                }
+              : null,
+            images: [],
+          };
+
+          setProducts((current) => [newProduct, ...current]);
           setEditingId(created.id);
           setForm({
             name: created.name,
@@ -156,33 +337,67 @@ export default function ProductsManager({
             featured: created.featured,
             published: created.published,
           });
-          setMessage("Produit créé. Ajoutez des images ci-dessous.");
-          return;
+
+          if (pendingImages.length > 0) {
+            await uploadPendingToProduct(created.id);
+            setMessage("Produit créé et images envoyées.");
+          } else {
+            setMessage(
+              "Produit créé. Ajoutez des images dans la zone ci-dessus.",
+            );
+          }
         }
-        resetForm();
       } catch (e) {
         setError(e instanceof Error ? e.message : "Erreur.");
       }
     });
   }
 
-  const activeProduct = editingId
-    ? products.find((p) => p.id === editingId)
-    : null;
+  const displayImages = [
+    ...(activeProduct?.images ?? []),
+    ...pendingImages.map((p, index) => ({
+      id: p.id,
+      url: p.url,
+      sortOrder: 1000 + index,
+      isPrimary: false,
+    })),
+  ];
 
   return (
     <div className="space-y-8">
       <div>
-        <p className="text-[10px] uppercase tracking-[0.28em] text-muted">Catalogue</p>
+        <p className="text-[10px] uppercase tracking-[0.28em] text-muted">
+          Catalogue
+        </p>
         <h2 className="mt-2 font-display text-4xl text-ink">Produits</h2>
       </div>
 
-      <div className="grid gap-6 xl:grid-cols-[380px_1fr]">
-        <section className="rounded-xl border border-line bg-white p-6">
+      <div className="grid gap-6 xl:grid-cols-[minmax(0,480px)_1fr]">
+        <section className="space-y-6 rounded-xl border border-line bg-white p-6">
           <h3 className="font-display text-2xl">
-            {editingId ? "Modifier" : "Nouveau produit"}
+            {editingId ? "Modifier le produit" : "Nouveau produit"}
           </h3>
-          <div className="mt-4 space-y-3">
+
+          <ProductImageUploader
+            productId={editingId}
+            images={displayImages}
+            onUpload={handleImageUpload}
+            onDelete={handleImageDelete}
+            onReorder={handleImageReorder}
+            hint={
+              editingId
+                ? "Glissez-déposez ou cliquez pour ajouter des images. Stockées sur Cloudflare R2."
+                : "Vous pouvez sélectionner des images maintenant — elles seront envoyées à la création."
+            }
+          />
+
+          {pendingImages.length > 0 ? (
+            <p className="text-xs text-brand-blue">
+              {pendingImages.length} image(s) en attente d&apos;envoi
+            </p>
+          ) : null}
+
+          <div className="space-y-3 border-t border-line pt-6">
             {Object.entries({
               name: "Nom",
               slug: "Slug (optionnel)",
@@ -250,16 +465,26 @@ export default function ProductsManager({
               Publié
             </label>
           </div>
-          {error ? <p className="mt-3 text-sm text-rose-600">{error}</p> : null}
-          {message ? <p className="mt-3 text-sm text-emerald-700">{message}</p> : null}
-          <div className="mt-4 flex gap-2">
+
+          {error ? (
+            <p className="text-sm text-rose-600">{error}</p>
+          ) : null}
+          {message ? (
+            <p className="text-sm text-emerald-700">{message}</p>
+          ) : null}
+
+          <div className="flex gap-2">
             <button
               type="button"
               disabled={pending}
               onClick={onSubmit}
               className="rounded-lg bg-ink px-4 py-2 text-sm text-white disabled:opacity-60"
             >
-              {pending ? "Enregistrement..." : editingId ? "Sauvegarder" : "Créer"}
+              {pending
+                ? "Enregistrement..."
+                : editingId
+                  ? "Sauvegarder"
+                  : "Créer le produit"}
             </button>
             {editingId ? (
               <button
@@ -271,75 +496,6 @@ export default function ProductsManager({
               </button>
             ) : null}
           </div>
-
-          {activeProduct ? (
-            <div className="mt-6 border-t border-line pt-6">
-              <p className="text-sm font-medium">Galerie images</p>
-              <input
-                type="file"
-                accept="image/*"
-                className="mt-2 w-full text-sm"
-                onChange={async (e) => {
-                  const file = e.target.files?.[0];
-                  if (!file || !editingId) return;
-                  try {
-                    await uploadImage(editingId, file);
-                    window.location.reload();
-                  } catch (err) {
-                    setError(err instanceof Error ? err.message : "Upload échoué.");
-                  }
-                }}
-              />
-              <div className="mt-3 space-y-2">
-                {activeProduct.images.map((image, index) => (
-                  <div
-                    key={image.id}
-                    className="flex items-center gap-3 rounded-lg border border-line p-2"
-                  >
-                    <div className="relative h-12 w-12 overflow-hidden rounded">
-                      <Image src={image.url} alt="" fill className="object-cover" unoptimized />
-                    </div>
-                    <span className="flex-1 text-xs text-muted">#{index + 1}</span>
-                    <button
-                      type="button"
-                      className="text-xs text-muted hover:text-ink"
-                      onClick={() => {
-                        if (!editingId) return;
-                        startTransition(async () => {
-                          const ids = [...activeProduct.images]
-                            .sort((a, b) => a.sortOrder - b.sortOrder)
-                            .map((i) => i.id);
-                          const currentIndex = ids.indexOf(image.id);
-                          if (currentIndex > 0) {
-                            [ids[currentIndex - 1], ids[currentIndex]] = [
-                              ids[currentIndex],
-                              ids[currentIndex - 1],
-                            ];
-                            await reorderProductImages(editingId, ids);
-                            window.location.reload();
-                          }
-                        });
-                      }}
-                    >
-                      ↑
-                    </button>
-                    <button
-                      type="button"
-                      className="text-xs text-rose-600"
-                      onClick={() =>
-                        startTransition(async () => {
-                          await deleteProductImage(image.id);
-                          window.location.reload();
-                        })
-                      }
-                    >
-                      Suppr.
-                    </button>
-                  </div>
-                ))}
-              </div>
-            </div>
-          ) : null}
         </section>
 
         <section className="rounded-xl border border-line bg-white p-6">
@@ -370,9 +526,10 @@ export default function ProductsManager({
             />
           ) : (
             <div className="overflow-x-auto">
-              <table className="w-full min-w-[720px] text-left text-sm">
+              <table className="w-full min-w-[800px] text-left text-sm">
                 <thead>
                   <tr className="border-b border-line text-xs uppercase tracking-wide text-muted">
+                    <th className="py-3 pr-3">Image</th>
                     <th className="py-3 pr-3">Produit</th>
                     <th className="py-3 pr-3">Catégorie</th>
                     <th className="py-3 pr-3">Prix</th>
@@ -382,64 +539,97 @@ export default function ProductsManager({
                   </tr>
                 </thead>
                 <tbody>
-                  {filtered.map((product) => (
-                    <tr key={product.id} className="border-b border-line/70">
-                      <td className="py-3 pr-3">
-                        <p className="font-medium">{product.name}</p>
-                        <p className="text-xs text-muted">{product.slug}</p>
-                      </td>
-                      <td className="py-3 pr-3">{product.category?.name ?? "—"}</td>
-                      <td className="py-3 pr-3">
-                        {Number(product.price).toLocaleString("fr-FR")} DA
-                      </td>
-                      <td className="py-3 pr-3">{product.stockQuantity}</td>
-                      <td className="py-3 pr-3">
-                        {product.published ? "Publié" : "Brouillon"}
-                      </td>
-                      <td className="py-3">
-                        <div className="flex flex-wrap gap-2">
-                          <button
-                            type="button"
-                            className="text-xs underline"
-                            onClick={() => startEdit(product)}
-                          >
-                            Modifier
-                          </button>
-                          <button
-                            type="button"
-                            className="text-xs underline"
-                            onClick={() =>
-                              startTransition(async () => {
-                                const updated = await toggleProductPublished(product.id);
-                                setProducts((current) =>
-                                  current.map((p) =>
-                                    p.id === product.id
-                                      ? { ...p, published: updated.published }
-                                      : p,
-                                  ),
-                                );
-                              })
-                            }
-                          >
-                            {product.published ? "Dépublier" : "Publier"}
-                          </button>
-                          <button
-                            type="button"
-                            className="text-xs text-rose-600"
-                            onClick={() => {
-                              if (!confirm(`Supprimer ${product.name} ?`)) return;
-                              startTransition(async () => {
-                                await deleteProduct(product.id);
-                                setProducts((c) => c.filter((p) => p.id !== product.id));
-                              });
-                            }}
-                          >
-                            Supprimer
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
+                  {filtered.map((product) => {
+                    const primary =
+                      product.images.find((i) => i.isPrimary) ??
+                      product.images[0];
+                    return (
+                      <tr key={product.id} className="border-b border-line/70">
+                        <td className="py-3 pr-3">
+                          <div className="relative h-12 w-12 overflow-hidden rounded-lg border border-line bg-paper">
+                            {primary ? (
+                              <Image
+                                src={primary.url}
+                                alt=""
+                                fill
+                                className="object-cover"
+                                unoptimized
+                              />
+                            ) : (
+                              <span className="flex h-full items-center justify-center text-[10px] text-muted">
+                                —
+                              </span>
+                            )}
+                          </div>
+                        </td>
+                        <td className="py-3 pr-3">
+                          <p className="font-medium">{product.name}</p>
+                          <p className="text-xs text-muted">{product.slug}</p>
+                          <p className="text-xs text-muted">
+                            {product.images.length} image(s)
+                          </p>
+                        </td>
+                        <td className="py-3 pr-3">
+                          {product.category?.name ?? "—"}
+                        </td>
+                        <td className="py-3 pr-3">
+                          {Number(product.price).toLocaleString("fr-FR")} DA
+                        </td>
+                        <td className="py-3 pr-3">{product.stockQuantity}</td>
+                        <td className="py-3 pr-3">
+                          {product.published ? "Publié" : "Brouillon"}
+                        </td>
+                        <td className="py-3">
+                          <div className="flex flex-wrap gap-2">
+                            <button
+                              type="button"
+                              className="text-xs underline"
+                              onClick={() => startEdit(product)}
+                            >
+                              Modifier
+                            </button>
+                            <button
+                              type="button"
+                              className="text-xs underline"
+                              onClick={() =>
+                                startTransition(async () => {
+                                  const updated = await toggleProductPublished(
+                                    product.id,
+                                  );
+                                  setProducts((current) =>
+                                    current.map((p) =>
+                                      p.id === product.id
+                                        ? { ...p, published: updated.published }
+                                        : p,
+                                    ),
+                                  );
+                                })
+                              }
+                            >
+                              {product.published ? "Dépublier" : "Publier"}
+                            </button>
+                            <button
+                              type="button"
+                              className="text-xs text-rose-600"
+                              onClick={() => {
+                                if (!confirm(`Supprimer ${product.name} ?`))
+                                  return;
+                                startTransition(async () => {
+                                  await deleteProduct(product.id);
+                                  setProducts((c) =>
+                                    c.filter((p) => p.id !== product.id),
+                                  );
+                                  if (editingId === product.id) resetForm();
+                                });
+                              }}
+                            >
+                              Supprimer
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    );
+                  })}
                 </tbody>
               </table>
             </div>
