@@ -1,11 +1,11 @@
-@import url("https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Inter:wght@300;400;500&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@300;400;500;600;700&display=swap");
 @import "tailwindcss";
 @import "./legacy-commerce.css";
 
 @theme {
   --color-brand-blue: #008cca;
   --color-brand-yellow: #fdd102;
-  --color-ink: #111111;
+  --color-ink: #1a1a1a;
   --color-ink-soft: #222222;
   --color-charcoal: #2d2d2d;
   --color-muted: #6b6b6b;
@@ -14,8 +14,8 @@
   --color-surface: #ffffff;
   --color-paper: #f9f9f8;
 
-  --font-sans: "Inter", system-ui, sans-serif;
-  --font-serif: "Cormorant Garamond", "Times New Roman", serif;
+  --font-sans: "Nunito Sans", system-ui, sans-serif;
+  --font-serif: "Nunito Sans", system-ui, sans-serif;
 
   --ease-premium: cubic-bezier(0.25, 0.1, 0.25, 1);
 }
