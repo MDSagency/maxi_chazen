@@ -21,7 +21,7 @@ const PUBLIC = {
   logo: "/logo.jfif",
   logoFavicon: "/logo.jfif",
   productsFlatlay: asset(babyWithMother),
-  productsNursery: "/images/unnamed.jpg",
+  productsNursery: asset(babyWithMother),
   productBalm: "/images/unnamed2.jpg",
 } as const;
 
