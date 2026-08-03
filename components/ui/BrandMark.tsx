@@ -41,6 +41,7 @@ export default function BrandMark({
         height={height}
         priority={priority}
         className="h-full w-full object-contain object-center"
+        unoptimized
       />
     </div>
   );

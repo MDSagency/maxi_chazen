@@ -140,6 +140,7 @@ export default function Navbar() {
               height={80}
               className="h-11 w-auto max-w-[11rem] object-contain object-left sm:h-12 sm:max-w-[12.5rem] md:h-14 md:max-w-[14rem] lg:h-[3.75rem] lg:max-w-[15.5rem]"
               priority
+              unoptimized
             />
           </Link>
 
@@ -235,6 +236,7 @@ export default function Navbar() {
                     width={200}
                     height={64}
                     className="mx-auto h-14 w-auto object-contain"
+                    unoptimized
                   />
                 </Link>
               </motion.div>
