@@ -18,7 +18,7 @@ function asset(img: StaticImageData): string {
  * Public assets — product flat-lays for catalog fallbacks only.
  */
 const PUBLIC = {
-  logo: "https://res.cloudinary.com/drfntkkhe/image/upload/v1777151440/image-removebg-preview_uuol8c.png",
+  logo: "/logo.jfif",
   logoFavicon: "/logo.jfif",
   productsFlatlay: "/images/unnamed.jpg",
   productsNursery: "/images/unnamed1.jpg",
