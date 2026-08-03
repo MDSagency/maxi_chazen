@@ -20,8 +20,8 @@ function asset(img: StaticImageData): string {
 const PUBLIC = {
   logo: "/logo.jfif",
   logoFavicon: "/logo.jfif",
-  productsFlatlay: "/images/unnamed.jpg",
-  productsNursery: "/images/unnamed1.jpg",
+  productsFlatlay: "/images/unnamed1.jpg",
+  productsNursery: "/images/unnamed.jpg",
   productBalm: "/images/unnamed2.jpg",
 } as const;
 
