@@ -61,14 +61,14 @@ export const BRAND_IMAGES = {
   },
 
   lifestyle: {
-    collection: PUBLIC.productsFlatlay,
+    collection: asset(babyWithMother),
     rituel: asset(baby2),
     famille: asset(babyAndParent1),
     purete: asset(baby5),
   },
 
   products: {
-    collection: PUBLIC.productsFlatlay,
+    collection: asset(babyWithMother),
     nursery: PUBLIC.productsNursery,
     balm: PUBLIC.productBalm,
   },
