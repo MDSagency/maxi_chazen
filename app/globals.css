@@ -10,7 +10,7 @@
   --color-charcoal: #2d2d2d;
   --color-muted: #6b6b6b;
   --color-muted-light: #9a9a9a;
-  --color-line: #e5e5e5;
+  --color-line: var(--color-brand-yellow);
   --color-surface: #ffffff;
   --color-paper: #f9f9f8;
 
