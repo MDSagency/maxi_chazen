@@ -17,7 +17,6 @@ const footerLinks = {
 const socialLinks = [
   { href: "https://www.instagram.com/maxi.chazen/", label: "Instagram" },
   { href: "https://www.tiktok.com/@maxi.chazen", label: "TikTok" },
-  { href: "https://www.facebook.com/maxichazen/", label: "Facebook" },
 ];
 
 export default function Footer() {
@@ -67,7 +66,7 @@ export default function Footer() {
 
           <div>
             <p className="eyebrow mb-6">Suivez-nous</p>
-            <div className="mb-4 flex flex-col sm:flex-row sm:items-center sm:gap-3">
+            <div className="mb-4 flex flex-col items-start gap-3">
               <a
                 href="https://www.instagram.com/maxi.chazen/"
                 target="_blank"
@@ -86,10 +85,13 @@ export default function Footer() {
                 href="https://www.tiktok.com/@maxi.chazen"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-3 rounded-md bg-black px-4 py-2 text-sm font-medium text-white"
+                className="inline-flex items-center gap-3 rounded-md px-4 py-2 text-sm font-medium text-white"
+                style={{ background: "linear-gradient(90deg,#000000 0%, #000000 40%, #69C9D0 55%, #EE1D52 100%)" }}
               >
-                <svg width="18" height="18" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden>
-                  <path d="M34 14.5c-1 0-2 .1-3 .3v7.2a6.5 6.5 0 1 1-6.5-6.5V9a10.5 10.5 0 0 0 9.5 5.5z" fill="white" />
+                <svg width="18" height="18" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden>
+                  <path d="M9 2v9.5A4.5 4.5 0 1 0 13.5 16V7h2.5V4h-5z" fill="#69C9D0" transform="translate(0,-0.12)" />
+                  <path d="M9 2v9.5A4.5 4.5 0 1 0 13.5 16V7h2.5V4h-5z" fill="#EE1D52" transform="translate(0,0.12)" opacity="0.9" />
+                  <path d="M9 2v9.5A4.5 4.5 0 1 0 13.5 16V7h2.5V4h-5z" fill="#010101" transform="translate(0,0)" />
                 </svg>
                 <span>Suivez-nous sur TikTok @maxi.chazen</span>
               </a>
