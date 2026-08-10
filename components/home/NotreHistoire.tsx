@@ -60,15 +60,15 @@ export default function NotreHistoire() {
                 Fabriqué en Algérie
               </p>
               <p className="mx-auto mt-3 max-w-md font-light leading-[1.9] text-muted md:text-base lg:mx-0">
-                Soins essentiels pour les tout-petits · Qualité contrôlée ·
+                Soins essentiels pour les tout-petits, Qualité contrôlée,
                 Formules sûres et testées dermatologiquement
               </p>
             </FadeIn>
 
             <FadeIn delay={0.18}>
               <p className="mx-auto mt-8 max-w-md text-[15px] font-light leading-[1.9] text-charcoal md:text-base lg:mx-0">
-                Née d&apos;une conviction simple — que chaque bébé mérite des
-                soins à la hauteur de sa fragilité — Maxi Chazen allie rigueur
+                Née d&apos;une conviction simple, que chaque bébé mérite des
+                soins à la hauteur de sa fragilité, Maxi Chazen allie rigueur
                 scientifique et attention maternelle. Nous formulons l&apos;essentiel,
                 rien de superflu : des produits sûrs, doux, et pensés pour
                 accompagner les premiers gestes du quotidien.

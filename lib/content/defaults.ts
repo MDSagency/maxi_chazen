@@ -8,7 +8,7 @@ export const DEFAULT_WEBSITE_CONTENT = {
       "Des soins doux, sûrs et élégants — formulés pour la peau délicate de votre bébé, avec la rigueur d'une maison de luxe.",
     ctaPrimary: "Découvrir la collection",
     ctaSecondary: "Notre histoire",
-    imageUrl: BRAND_IMAGES.hero,
+    imageUrl: "/hero-image.png",
     stats: [
       { value: "4.9", label: "Note clients" },
       { value: "100%", label: "Testé dermatologiquement" },

@@ -67,6 +67,21 @@ export default function Footer() {
 
           <div>
             <p className="eyebrow mb-6">Suivez-nous</p>
+            <div className="mb-4">
+              <a
+                href="https://www.instagram.com/maxi.chazen/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-3 rounded-md bg-gradient-to-r from-[#F58529] via-[#DD2A7B] to-[#515BD4] px-4 py-2 text-sm font-medium text-white"
+              >
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden>
+                  <rect x="2" y="2" width="20" height="20" rx="5" stroke="white" strokeWidth="1.2" />
+                  <path d="M7.5 11.99a4.5 4.5 0 1 1 9 0 4.5 4.5 0 0 1-9 0z" stroke="white" strokeWidth="1.2" />
+                  <circle cx="17.5" cy="6.5" r="0.8" fill="white" />
+                </svg>
+                <span>Suivez-nous sur Instagram @MaxiChazen</span>
+              </a>
+            </div>
             <ul className="space-y-4">
               {socialLinks.map((link) => (
                 <li key={link.href}>

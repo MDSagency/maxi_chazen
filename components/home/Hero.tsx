@@ -3,6 +3,7 @@
 import { motion, useScroll, useTransform } from "framer-motion";
 import { useRef } from "react";
 import Button from "@/components/ui/Button";
+import Image from "next/image";
 import Container from "@/components/ui/Container";
 import FadeIn from "@/components/motion/FadeIn";
 import EditorialImage from "@/components/ui/EditorialImage";
@@ -14,6 +15,7 @@ import ClipReveal from "@/components/motion/ClipReveal";
 import StaggerGroup, { StaggerItem } from "@/components/motion/StaggerGroup";
 import CountStat from "@/components/motion/CountStat";
 import { BRAND_IMAGES } from "@/lib/images";
+import HeroImage from "@/lib/Hero Image.jpg";
 import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
 
 const stats = [
@@ -35,7 +37,7 @@ export default function Hero() {
   return (
     <section
       ref={ref}
-      className="paper-grain relative overflow-hidden bg-surface pb-20 sm:pb-28 md:pb-40 lg:pb-48 pt-20 sm:pt-[5.25rem] md:pt-24"
+      className="paper-grain relative overflow-hidden bg-surface pb-16 sm:pb-24 md:pb-32 lg:pb-40 pt-0 sm:pt-4 md:pt-6 lg:pt-8 -mt-40 sm:-mt-40 md:-mt-44 lg:-mt-44"
     >
       <div
         className="pointer-events-none absolute -right-24 top-32 hidden h-72 w-72 rounded-full bg-brand-blue/[0.04] blur-3xl md:block"
@@ -62,7 +64,7 @@ export default function Hero() {
 
           <FadeIn delay={0.25} blur>
             <p className="mx-auto mt-8 max-w-md text-[15px] font-light leading-[1.85] text-muted md:text-base lg:mx-0">
-              Des soins doux, sûrs et élégants — formulés pour la peau délicate
+              Des soins doux, sûrs et élégants, formulés pour la peau délicate
               de votre bébé, avec la rigueur d&apos;une maison de luxe.
             </p>
           </FadeIn>
@@ -107,29 +109,14 @@ export default function Hero() {
               className="relative"
             >
               <EditorialImage
-                src={BRAND_IMAGES.hero}
+                src={HeroImage}
                 alt="Lien tendre entre parent et bébé — Maxi Chazen"
-                aspect="hero"
+                aspect="landscape"
                 priority
                 parallax
                 sizes="(max-width: 1024px) 90vw, 45vw"
                 className="luxury-shadow-deep"
               />
-
-              <motion.div
-                initial={reduced ? false : { opacity: 0, y: 20, scale: 0.96 }}
-                animate={{ opacity: 1, y: 0, scale: 1 }}
-                transition={{ duration: 1.1, delay: 0.65, ease: [0.22, 1, 0.36, 1] }}
-                className="absolute -bottom-6 left-1/2 flex w-[min(100%,300px)] -translate-x-1/2 items-center gap-5 border border-line bg-white p-5 luxury-shadow sm:-bottom-8 lg:left-0 lg:translate-x-0 lg:-translate-x-6"
-              >
-                <BrandMark size="md" animated priority />
-                <div className="text-left">
-                  <p className="font-display text-lg text-ink">Maxi Chazen</p>
-                  <p className="mt-1 text-sm font-light leading-relaxed text-charcoal">
-                    Baume barrière doux — formulé pour la peau délicate.
-                  </p>
-                </div>
-              </motion.div>
             </motion.div>
           </ClipReveal>
         </div>

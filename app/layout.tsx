@@ -1,4 +1,5 @@
 import "./globals.css";
+import InstagramSticky from "@/components/layout/InstagramSticky";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -19,7 +20,10 @@ export default function RootLayout({
 }) {
   return (
     <html lang="fr">
-      <body className="min-h-screen bg-white">{children}</body>
+      <body className="min-h-screen bg-white">
+        {children}
+        <InstagramSticky />
+      </body>
     </html>
   );
 }

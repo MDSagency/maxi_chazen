@@ -1,8 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Image from "next/image";
 import Link from "next/link";
+import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/cn";
 import { BRAND_IMAGES } from "@/lib/images";
@@ -136,9 +136,9 @@ export default function Navbar() {
             <Image
               src={BRAND_IMAGES.logo}
               alt="Maxi Chazen"
-              width={240}
-              height={80}
-              className="h-11 w-auto max-w-[11rem] object-contain object-left sm:h-12 sm:max-w-[12.5rem] md:h-14 md:max-w-[14rem] lg:h-[3.75rem] lg:max-w-[15.5rem]"
+              width={320}
+              height={120}
+              className="h-14 w-auto max-w-[14rem] object-contain object-left sm:h-16 sm:max-w-[15rem] md:h-16 md:max-w-[16rem] lg:h-[4.5rem] lg:max-w-[18rem]"
               priority
               unoptimized
             />
@@ -156,6 +156,21 @@ export default function Navbar() {
                 className={linkClass}
               />
             ))}
+              <motion.div whileHover={reduced ? undefined : { scale: 1.02 }}>
+              <a
+                href="https://www.instagram.com/maxi.chazen/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex h-10 items-center gap-3 px-4 text-[11px] uppercase tracking-[0.2em] bg-gradient-to-r from-[#F58529] via-[#DD2A7B] to-[#515BD4] text-white rounded-md shadow-sm transition-opacity duration-200 hover:opacity-95"
+              >
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden>
+                  <rect x="2" y="2" width="20" height="20" rx="5" stroke="white" strokeWidth="1.2" />
+                  <path d="M7.5 11.99a4.5 4.5 0 1 1 9 0 4.5 4.5 0 0 1-9 0z" stroke="white" strokeWidth="1.2" />
+                  <circle cx="17.5" cy="6.5" r="0.8" fill="white" />
+                </svg>
+                <span>Suivez @MaxiChazen</span>
+              </a>
+            </motion.div>
             <motion.div whileHover={reduced ? undefined : { scale: 1.02 }}>
               <Link
                 href="/panier"
@@ -233,9 +248,9 @@ export default function Navbar() {
                   <Image
                     src={BRAND_IMAGES.logo}
                     alt="Maxi Chazen"
-                    width={200}
-                    height={64}
-                    className="mx-auto h-14 w-auto object-contain"
+                    width={260}
+                    height={84}
+                    className="mx-auto h-16 w-auto object-contain"
                     unoptimized
                   />
                 </Link>
