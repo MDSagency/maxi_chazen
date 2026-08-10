@@ -9,9 +9,9 @@ import LineReveal from "@/components/motion/LineReveal";
 import ClipReveal from "@/components/motion/ClipReveal";
 import StaggerGroup, { StaggerItem } from "@/components/motion/StaggerGroup";
 import { BRAND_IMAGES } from "@/lib/images";
-import imgBaby1 from "@/lib/Baby 1 .jpg";
-import imgBaby2 from "@/lib/baby 2.jpg";
-import imgBaby3 from "@/lib/baby 3.jpg";
+import imgImage5 from "@/lib/image 5.jpg";
+import imgImage3 from "@/lib/image 3.jpg";
+import imgImage1 from "@/lib/image  1.jpg";
 import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
 
 const values = [
@@ -115,7 +115,7 @@ export default function NotreHistoire() {
           <div className="lg:col-span-7">
             <ClipReveal direction="left" delay={0.1}>
               <EditorialImage
-                src={imgBaby2}
+                src={imgImage5}
                 alt="Moment de tendresse entre mère et bébé — Maxi Chazen"
                 aspect="landscape"
                 parallax
@@ -133,7 +133,7 @@ export default function NotreHistoire() {
               <StaggerItem>
                 <ClipReveal direction="up" delay={0.05}>
                   <EditorialImage
-                    src={imgBaby1}
+                    src={imgImage1}
                     alt="Routine de soin quotidienne — essentiels Maxi Chazen"
                     aspect="portrait"
                     hoverZoom
@@ -144,7 +144,7 @@ export default function NotreHistoire() {
               <StaggerItem>
                 <ClipReveal direction="up" delay={0.12}>
                   <EditorialImage
-                    src={imgBaby3}
+                    src={imgImage3}
                     alt="Moment de douceur et de sérénité — Maxi Chazen"
                     aspect="portrait"
                     hoverZoom
