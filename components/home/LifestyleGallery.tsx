@@ -44,15 +44,7 @@ export default function LifestyleGallery() {
       className="overflow-hidden border-t border-line bg-paper py-20 md:py-28"
     >
       <Container>
-        <FadeIn className="mb-12 text-center md:mb-16">
-          <p className="eyebrow mb-4">Univers visuel</p>
-          <LineReveal align="center" />
-          <RevealText
-            text="L'art du soin, au quotidien"
-            as="h2"
-            className="mt-6 justify-center font-display text-3xl text-ink md:text-4xl"
-          />
-        </FadeIn>
+        {/* Header 'Univers visuel' removed per request */}
 
         <motion.div style={reduced ? undefined : { x: rowX }}>
           <StaggerGroup
