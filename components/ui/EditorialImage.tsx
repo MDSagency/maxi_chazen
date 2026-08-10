@@ -2,12 +2,13 @@
 
 import Image from "next/image";
 import { motion, useScroll, useTransform } from "framer-motion";
+import type { StaticImageData } from "next/image";
 import { useEffect, useRef, useState } from "react";
 import { cn } from "@/lib/cn";
 import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
 
 type EditorialImageProps = {
-  src: string;
+  src: string | StaticImageData;
   alt: string;
   priority?: boolean;
   sizes?: string;
