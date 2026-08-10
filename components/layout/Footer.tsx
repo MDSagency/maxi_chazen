@@ -78,7 +78,7 @@ export default function Footer() {
                   <path d="M7.5 11.99a4.5 4.5 0 1 1 9 0 4.5 4.5 0 0 1-9 0z" stroke="white" strokeWidth="1.2" />
                   <circle cx="17.5" cy="6.5" r="0.8" fill="white" />
                 </svg>
-                <span>Suivez-nous sur Instagram @MaxiChazen</span>
+                <span className="sr-only">Suivez-nous sur Instagram @MaxiChazen</span>
               </a>
 
               <a
@@ -90,7 +90,7 @@ export default function Footer() {
                 <svg width="18" height="18" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden>
                   <path d="M9 2v9.5A4.5 4.5 0 1 0 13.5 16V7h2.5V4h-5z" fill="#ffffff" transform="translate(0,0)" />
                 </svg>
-                <span>Suivez-nous sur TikTok @maxi.chazen</span>
+                <span className="sr-only">Suivez-nous sur TikTok @maxi.chazen</span>
               </a>
             </div>
             <ul className="space-y-4">
