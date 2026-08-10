@@ -6,6 +6,10 @@ import SectionHeader from "@/components/ui/SectionHeader";
 import EditorialImage from "@/components/ui/EditorialImage";
 import StaggerGroup, { StaggerItem } from "@/components/motion/StaggerGroup";
 import { BRAND_IMAGES } from "@/lib/images";
+import naturelProducts from "@/lib/naturel products.jpg";
+import soinsDelicatsImg from "@/lib/soins delicats.jpg";
+import image4 from "@/lib/image  4.jpg";
+import image2 from "@/lib/image 2.jpg";
 import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
 
 const benefits = [
@@ -13,28 +17,28 @@ const benefits = [
     num: "01",
     title: "Soins Délicats",
     text: "Des textures légères et des gestes de soin pensés pour la peau la plus fragile, dès les premiers jours.",
-    image: BRAND_IMAGES.editorial.soinsDelicats,
+    image: soinsDelicatsImg.src ?? soinsDelicatsImg,
     alt: "Rituel de soin délicat — bien-être quotidien de bébé",
   },
   {
     num: "02",
     title: "Produits Naturels",
     text: "Des actifs d'origine naturelle, sélectionnés pour leur pureté et leur douceur sur la peau de bébé.",
-    image: BRAND_IMAGES.editorial.produitsNaturels,
+    image: naturelProducts.src ?? naturelProducts,
     alt: "Essentiels de soin naturels — routine Maxi Chazen",
   },
   {
     num: "03",
     title: "Protection Quotidienne",
     text: "Des formules qui protègent, hydratent et apaisent — pour un quotidien serein, en toute confiance.",
-    image: BRAND_IMAGES.editorial.protectionQuotidienne,
+    image: image4.src ?? image4,
     alt: "Pureté et protection — douceur au quotidien",
   },
   {
     num: "04",
     title: "Confiance Parentale",
     text: "Testés dermatologiquement et formulés avec exigence, nos soins accompagnent chaque étape avec sérénité.",
-    image: BRAND_IMAGES.editorial.confianceParentale,
+    image: image2.src ?? image2,
     alt: "Lien de confiance entre parent et bébé",
   },
 ];
