@@ -70,7 +70,7 @@ export default function ProductCard({
           </Link>
         </div>
 
-        <div className="mt-auto flex flex-col items-center gap-4 border-t border-line pt-4 sm:flex-row sm:items-end sm:justify-between md:items-end">
+        <div className="mt-auto flex flex-col items-center gap-4 border-t border-brand-yellow pt-4 sm:flex-row sm:items-end sm:justify-between md:items-end">
           <p className="text-sm font-normal tracking-wide text-ink">
             {product.price.toLocaleString("fr-FR")} DA
           </p>

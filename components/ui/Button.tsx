@@ -34,7 +34,7 @@ const variantStyles: Record<ButtonVariant, string> = {
   ghost:
     "bg-transparent text-ink hover:text-charcoal border border-transparent",
   outline:
-    "border border-ink/20 bg-transparent text-ink hover:border-ink/50 hover:bg-paper/60",
+    "border border-brand-yellow bg-transparent text-ink hover:border-brand-yellow/90 hover:bg-paper/60",
 };
 
 const sizeStyles: Record<ButtonSize, string> = {
