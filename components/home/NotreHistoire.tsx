@@ -120,7 +120,7 @@ export default function NotreHistoire() {
                 aspect="landscape"
                 parallax
                 hoverZoom
-                sizes="(max-width: 1024px) 100vw, 58vw"
+                sizes="(max-width: 1024px) 90vw, 48vw"
                 className="luxury-shadow-deep"
               />
             </ClipReveal>
@@ -137,7 +137,7 @@ export default function NotreHistoire() {
                     alt="Routine de soin quotidienne — essentiels Maxi Chazen"
                     aspect="portrait"
                     hoverZoom
-                    sizes="(max-width: 640px) 100vw, 29vw"
+                    sizes="(max-width: 640px) 100vw, 22vw"
                   />
                 </ClipReveal>
               </StaggerItem>
@@ -148,7 +148,7 @@ export default function NotreHistoire() {
                     alt="Moment de douceur et de sérénité — Maxi Chazen"
                     aspect="portrait"
                     hoverZoom
-                    sizes="(max-width: 640px) 100vw, 29vw"
+                    sizes="(max-width: 640px) 100vw, 22vw"
                   />
                 </ClipReveal>
               </StaggerItem>
